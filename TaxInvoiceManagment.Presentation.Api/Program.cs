@@ -14,6 +14,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<TaxInvoiceManagmentDbContext>();
+        context.Database.Migrate(); // O EnsureCreated()
+    }
+    catch (Exception ex)
+    {
+        // Aquí puedes registrar el error usando Serilog o algún logger configurado
+        Console.WriteLine($"Error applying migrations: {ex.Message}");
+    }
+}
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
