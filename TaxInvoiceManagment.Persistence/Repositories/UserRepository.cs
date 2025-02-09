@@ -4,6 +4,10 @@ using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.Persistence.Repositories
 {
+    /// <summary>
+    /// Se deja ya creada la clase UserRepository por si a futuro se necesita
+    /// agregar metodos de consulta especiales.
+    /// </summary>
     public class UserRepository : Repository<User>, IUserRepository
     {
         private readonly TaxInvoiceManagmentDbContext _context;
