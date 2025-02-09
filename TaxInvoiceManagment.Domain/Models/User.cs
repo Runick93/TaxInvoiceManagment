@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaxInvoiceManagment.Domain.Models
+﻿namespace TaxInvoiceManagment.Domain.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        /*
+         * Id - PK.
+         * UserName.
+         * Email.
+         * Password.
+         */
+        public int Id { get; set; } //PK
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
         public ICollection<Asset> Assets { get; set; } = new List<Asset>();

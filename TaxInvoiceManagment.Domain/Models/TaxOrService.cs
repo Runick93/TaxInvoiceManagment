@@ -1,19 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaxInvoiceManagment.Domain.Models
+﻿namespace TaxInvoiceManagment.Domain.Models
 {
     public class TaxOrService
     {
-        public int Id { get; set; }
-        public string Description { get; set; } = null!;
-        public decimal Amount { get; set; }
-        public int AssetId { get; set; }
-        public Asset Asset { get; set; } = null!;
-        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+        /*
+         * Id - PK.
+         * AssetId - FK.
+         * Nombre del servicio.
+         * Descripcion del servicio.
+         * Nombre del responsable.
+         * Tipo de servicio.
+         * Frecuencia de pago.
+         * Pago anual.
+         * Numero de cliente.
+         */
 
+        public enum PaymentFrequency
+        {
+            Monthly,       // Pago mensual
+            Quarterly,     // Pago trimestral            
+            SemiAnnually,  // Pago semestral
+            Annually,      // Pago anual
+        }
+
+        public int Id { get; set; } //PK
+        public int AssetId { get; set; } //FK
+        public Asset Asset { get; set; } = null!; //??
+        public string? ServiceName { get; set; }
+        public string ? ServiceDescription { get; set; }
+        public string? ResponsibleName { get; set; }
+        public string? ServiceType { get; set; }
+        public PaymentFrequency PayFrequency { get; set; }
+        public bool AnnualPayment { get; set; }
+        public string? ClientNumber { get; set; }
+        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     }
 }

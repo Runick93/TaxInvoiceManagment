@@ -24,26 +24,31 @@ namespace TaxInvoiceManagment.Persistence.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<int> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            int rowAffected = await _context.SaveChangesAsync();
+            return rowAffected;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<int> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            int rowAffected = await _context.SaveChangesAsync();
+            return rowAffected;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int id)
         {
+            int rowAffected = 0;
             var entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
-                await _context.SaveChangesAsync();
+                rowAffected = await _context.SaveChangesAsync();
             }
+
+            return rowAffected;
         }
     }
 }
