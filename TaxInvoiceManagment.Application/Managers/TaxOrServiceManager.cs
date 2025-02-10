@@ -31,19 +31,22 @@ namespace TaxInvoiceManagment.Application.Managers
 
         public async Task<bool> CreateTaxOrService(TaxOrService taxOrService)
         {            
-            int rowsAffected = await _unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            await _unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
 
         public async Task<bool> UpdateTaxOrService(TaxOrService taxOrService)
         {            
-            int rowsAffected = await _unitOfWork.TaxesOrServices.UpdateAsync(taxOrService);
+            await _unitOfWork.TaxesOrServices.UpdateAsync(taxOrService);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
 
         public async Task<bool> DeleteTaxOrService(int id)
         {            
-            int rowsAffected = await _unitOfWork.TaxesOrServices.DeleteAsync(id);
+            await _unitOfWork.TaxesOrServices.DeleteAsync(id);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
     }

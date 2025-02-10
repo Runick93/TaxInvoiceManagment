@@ -11,6 +11,8 @@ namespace TaxInvoiceManagment.Persistence.Managers
 
         public IUserRepository Users { get; }
         public IAssetRepository Assets { get; }
+        public IHomeRepository Homes { get; }
+        public IVehicleRepository Vehicles { get; }
         public ITaxOrServiceRepository TaxesOrServices { get; }
         public IInvoiceRepository Invoices { get; }
 
@@ -19,6 +21,8 @@ namespace TaxInvoiceManagment.Persistence.Managers
             _context = context;
             Users = new UserRepository(context);
             Assets = new AssetRepository(context);
+            Homes = new HomeRepository(context);
+            Vehicles =  new VehicleRepository(context);
             TaxesOrServices = new TaxOrServiceRepository(context);
             Invoices = new InvoiceRepository(context);
         }

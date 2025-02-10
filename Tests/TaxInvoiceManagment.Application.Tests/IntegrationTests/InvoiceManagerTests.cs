@@ -7,7 +7,7 @@ using TaxInvoiceManagment.Persistence.Managers;
 
 namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
 {
-    public class InvoiceManagerIntegrationTests
+    public class InvoiceManagerTests
     {
         [Fact]
         public async Task GetAllInvoices_ShouldReturnAllInvoices()
@@ -19,9 +19,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
 
             var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
             await unitOfWork.Users.AddAsync(user);
+            await unitOfWork.SaveChangesAsync();
 
             var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
             await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.SaveChangesAsync();
 
             var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
@@ -49,9 +51,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
 
             var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
             await unitOfWork.Users.AddAsync(user);
+            await unitOfWork.SaveChangesAsync();
 
             var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
             await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.SaveChangesAsync();
 
             var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
@@ -90,9 +94,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
 
             var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
             await unitOfWork.Users.AddAsync(user);
+            await unitOfWork.SaveChangesAsync();
 
             var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
             await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.SaveChangesAsync();
 
             var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
@@ -120,9 +126,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
 
             var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
             await unitOfWork.Users.AddAsync(user);
+            await unitOfWork.SaveChangesAsync();
 
             var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
             await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.SaveChangesAsync();
 
             var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
@@ -153,9 +161,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
 
             var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
             await unitOfWork.Users.AddAsync(user);
+            await unitOfWork.SaveChangesAsync();
 
             var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
             await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.SaveChangesAsync();
 
             var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);

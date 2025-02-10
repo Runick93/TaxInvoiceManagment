@@ -31,19 +31,22 @@ namespace TaxInvoiceManagment.Application.Managers
 
         public async Task<bool> CreateAsset(Asset asset)
         {            
-            int rowsAffected = await _unitOfWork.Assets.AddAsync(asset);
+            await _unitOfWork.Assets.AddAsync(asset);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
 
         public async Task<bool> UpdateAsset(Asset asset)
-        {            
-            int rowsAffected = await _unitOfWork.Assets.UpdateAsync(asset);
+        {
+            await _unitOfWork.Assets.UpdateAsync(asset);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
 
         public async Task<bool> DeleteAsset(int id)
-        {            
-            int rowsAffected = await _unitOfWork.Assets.DeleteAsync(id);
+        {
+            await _unitOfWork.Assets.DeleteAsync(id);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
     }

@@ -30,20 +30,23 @@ namespace TaxInvoiceManagment.Application.Managers
         }
 
         public async Task<bool> CreateInvoice(Invoice invoice)
-        {            
-            int rowsAffected = await _unitOfWork.Invoices.AddAsync(invoice);
+        {
+            await _unitOfWork.Invoices.AddAsync(invoice);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
 
         public async Task<bool> UpdateInvoice(Invoice invoice)
-        {            
-            int rowsAffected = await _unitOfWork.Invoices.UpdateAsync(invoice);
+        {
+            await _unitOfWork.Invoices.UpdateAsync(invoice);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
 
         public async Task<bool> DeleteInvoice(int id)
-        {            
-            int rowsAffected = await _unitOfWork.Invoices.DeleteAsync(id);
+        {
+            await _unitOfWork.Invoices.DeleteAsync(id);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
             return rowsAffected > 0;
         }
     }

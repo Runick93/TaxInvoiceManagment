@@ -31,44 +31,23 @@ namespace TaxInvoiceManagment.Application.Managers
 
         public async Task<bool> CreateUser(User user)
         {            
-            int rowsAffected = await _unitOfWork.Users.AddAsync(user);
-
-            if (rowsAffected > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            await _unitOfWork.Users.AddAsync(user);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
+            return rowsAffected > 0;
         }
 
         public async Task<bool> UpdateUser(User user)
         {
-            int rowsAffected = await _unitOfWork.Users.UpdateAsync(user);
-
-            if (rowsAffected > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            await _unitOfWork.Users.UpdateAsync(user);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
+            return rowsAffected > 0;
         }
 
         public async Task<bool> DeleteUser(int id)
         {            
-            int rowsAffected = await _unitOfWork.Users.DeleteAsync(id);
-
-            if (rowsAffected > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            await _unitOfWork.Users.DeleteAsync(id);
+            int rowsAffected = await _unitOfWork.SaveChangesAsync();
+            return rowsAffected > 0;
         }
     }
 }

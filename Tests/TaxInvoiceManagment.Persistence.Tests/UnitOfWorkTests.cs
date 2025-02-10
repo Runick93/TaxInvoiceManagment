@@ -7,7 +7,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
     {
         // User.
         [Fact]
-        public async Task UnitOfWork_ShouldHandleUserGetAllAsync()
+        public async Task User_GetAllAsync_ShouldReturnUsers()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -26,7 +26,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleUserGetByIdAsync()
+        public async Task User_GetByIdAsync_ShouldReturnUser()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -44,7 +44,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleUserAddAsync()
+        public async Task User_AddAsync_ShouldReturnUserAdded()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -54,6 +54,8 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
             // Act
             await unitOfWork.Users.AddAsync(user);
+            await unitOfWork.SaveChangesAsync();
+
             var users = await unitOfWork.Users.GetAllAsync();
 
             // Assert
@@ -62,7 +64,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleUserUpdateAsync()
+        public async Task User_UpdateAsync_ShouldReturnUserUpdated()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -82,7 +84,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleUserDeleteAsync()
+        public async Task User_DeleteAsync_ShouldNotReturnUserDeleted()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -101,7 +103,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
         // Asset.
         [Fact]
-        public async Task UnitOfWork_ShouldHandleAssetGetAllAsync()
+        public async Task Asset_GetAllAsync_ShouldReturnAssets()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -120,7 +122,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleAssetGetByIdAsync()
+        public async Task Asset_GetByIdAsync_ShouldReturnAsset()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -138,7 +140,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleAssetAddAsync()
+        public async Task Asset_AddAsync_ShouldReturnAssetAdded()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -148,6 +150,8 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
             // Act
             await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.SaveChangesAsync();
+
             var assets = await unitOfWork.Assets.GetAllAsync();
 
             // Assert
@@ -156,7 +160,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleAssetUpdateAsync()
+        public async Task Asset_UpdateAsync_ShouldReturnAssetUpdated()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -176,7 +180,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleAssetDeleteAsync()
+        public async Task Asset_DeleteAsync_ShouldNotReturnAssetDeleted()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -193,9 +197,201 @@ namespace TaxInvoiceManagment.Persistence.Tests
             Assert.Empty(assets);
         }
 
+        // Home.
+        [Fact]
+        public async Task Home_GetAllAsync_ShouldReturnHomes()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+
+            // Act
+            await unitOfWork.Homes.AddAsync(home);
+            await unitOfWork.SaveChangesAsync();
+
+            // Assert
+            var homes = await unitOfWork.Homes.GetAllAsync();
+            Assert.Single(homes);
+            Assert.Equal("Casa de Homero", homes.First().Name);
+        }
+
+        [Fact]
+        public async Task Home_GetByIdAsync_ShouldReturnHome()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            await unitOfWork.Homes.AddAsync(home);
+
+            // Act
+            var result = await unitOfWork.Homes.GetByIdAsync(home.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Casa de Homero", result.Name);
+        }
+
+        [Fact]
+        public async Task Home_AddAsync_ShouldReturnHomeAdded()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+
+            // Act
+            await unitOfWork.Homes.AddAsync(home);
+            await unitOfWork.SaveChangesAsync();
+
+            var homes = await unitOfWork.Homes.GetAllAsync();
+
+            // Assert
+            Assert.Single(homes);
+            Assert.Equal("Casa de Homero", homes.First().Name);
+        }
+
+        [Fact]
+        public async Task Home_UpdateAsync_ShouldReturnHomeUpdated()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            await unitOfWork.Homes.AddAsync(home);
+
+            // Act
+            home.Name = "Casa Rodante de Homero";
+            await unitOfWork.Homes.UpdateAsync(home);
+            var updatedHome = await unitOfWork.Homes.GetByIdAsync(home.Id);
+
+            // Assert
+            Assert.NotNull(updatedHome);
+            Assert.Equal("Casa Rodante de Homero", updatedHome!.Name);
+        }
+
+        [Fact]
+        public async Task Home_DeleteAsync_ShouldNotReturnHomeDeleted()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            await unitOfWork.Homes.AddAsync(home);
+
+            // Act
+            await unitOfWork.Homes.DeleteAsync(home.Id);
+            var homes = await unitOfWork.Homes.GetAllAsync();
+
+            // Assert
+            Assert.Empty(homes);
+        }
+
+        // Vehicle
+        [Fact]
+        public async Task Vehicle_GetAllAsync_ShouldReturnVehicles()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
+
+            // Act
+            await unitOfWork.Vehicles.AddAsync(vehicle);
+            await unitOfWork.SaveChangesAsync();
+
+            // Assert
+            var vehicles = await unitOfWork.Vehicles.GetAllAsync();
+            Assert.Single(vehicles);
+            Assert.Equal("Auto de Homero", vehicles.First().Name);
+        }
+
+        [Fact]
+        public async Task Vehicle_GetByIdAsync_ShouldReturnVehicle()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
+            await unitOfWork.Vehicles.AddAsync(vehicle);
+
+            // Act
+            var result = await unitOfWork.Vehicles.GetByIdAsync(vehicle.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Auto de Homero", result.Name);
+        }
+
+        [Fact]
+        public async Task Vehicle_AddAsync_ShouldReturnVehicleAdded()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
+
+            // Act
+            await unitOfWork.Vehicles.AddAsync(vehicle);
+            await unitOfWork.SaveChangesAsync();
+
+            var vehicles = await unitOfWork.Vehicles.GetAllAsync();
+
+            // Assert
+            Assert.Single(vehicles);
+            Assert.Equal("Auto de Homero", vehicles.First().Name);
+        }
+
+        [Fact]
+        public async Task Vehicle_UpdateAsync_ShouldReturnVehicleUpdated()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
+            await unitOfWork.Vehicles.AddAsync(vehicle);
+
+            // Act
+            vehicle.Name = "Moto de Homero";
+            await unitOfWork.Vehicles.UpdateAsync(vehicle);
+            var updatedHome = await unitOfWork.Vehicles.GetByIdAsync(vehicle.Id);
+
+            // Assert
+            Assert.NotNull(updatedHome);
+            Assert.Equal("Moto de Homero", updatedHome.Name);
+        }
+
+        [Fact]
+        public async Task Vehicle_DeleteAsync_ShouldNotReturnVehicleDeleted()
+        {
+            // Arrange
+            using var context = DbContextHelper.CreateInMemoryDbContext();
+            var unitOfWork = new UnitOfWork(context);
+
+            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
+            await unitOfWork.Vehicles.AddAsync(vehicle);
+
+            // Act
+            await unitOfWork.Vehicles.DeleteAsync(vehicle.Id);
+            var vehicles = await unitOfWork.Vehicles.GetAllAsync();
+
+            // Assert
+            Assert.Empty(vehicles);
+        }
+
         // TaxOrService.
         [Fact]
-        public async Task UnitOfWork_ShouldHandleTaxOrServiceGetAllAsync()
+        public async Task TaxOrService_GetAllAsync_ShouldReturnTaxesOrServices()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -214,7 +410,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleTaxOrServiceGetByIdAsync()
+        public async Task TaxOrService_GetByIdAsync_ShouldReturnTaxeOrService()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -232,7 +428,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleTaxOrServiceAddAsync()
+        public async Task TaxOrService_AddAsync_ShouldReturnTaxeOrServiceAdded()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -242,6 +438,8 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
             // Act
             await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            await unitOfWork.SaveChangesAsync();
+
             var taxesOrServices = await unitOfWork.TaxesOrServices.GetAllAsync();
 
             // Assert
@@ -250,7 +448,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleTaxOrServiceUpdateAsync()
+        public async Task TaxOrService_UpdateAsync_ShouldReturnTaxeOrServiceUpdated()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -270,7 +468,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleTaxOrServiceDeleteAsync()
+        public async Task TaxOrService_DeleteAsync_ShouldNotReturnTaxeOrServiceDeleted()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -289,7 +487,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
         // Invoice.
         [Fact]
-        public async Task UnitOfWork_ShouldHandleInvoiceGetAllAsync()
+        public async Task Invoice_GetAllAsync_ShouldReturnInvoices()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -315,7 +513,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleInvoiceGetByIdAsync()
+        public async Task Invoice_GetByIdAsync_ShouldReturnInvoice()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -339,7 +537,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleInvoiceAddAsync()
+        public async Task Invoice_AddAsync_ShouldReturnInvoiceAdded()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -355,6 +553,8 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
             // Act
             await unitOfWork.Invoices.AddAsync(invoice);
+            await unitOfWork.SaveChangesAsync();
+
             var invoices = await unitOfWork.Invoices.GetAllAsync();
 
             // Assert
@@ -363,7 +563,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleInvoiceUpdateAsync()
+        public async Task Invoice_UpdateAsync_ShouldReturnInvoiceUpdated()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
@@ -390,7 +590,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task UnitOfWork_ShouldHandleInvoiceDeleteAsync()
+        public async Task Invoice_DeleteAsync_ShouldNotReturnInvoiceDeleted()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();

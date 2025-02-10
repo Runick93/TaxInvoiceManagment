@@ -80,7 +80,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
+            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = 1 /*user.Id*/ };
 
             // Act
             var result = await assetManager.CreateAsset(asset);
