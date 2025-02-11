@@ -6,9 +6,7 @@ namespace TaxInvoiceManagment.Persistence
     public class TaxInvoiceManagmentDbContext : DbContext
     {
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Asset> Assets { get; set; } = null!;
-        public DbSet<Home> Homes { get; set; } = null!;
-        public DbSet<Vehicle> Vehicles { get; set; } = null!;
+        public DbSet<TaxableItem> TaxableItems { get; set; } = null!;
         public DbSet<TaxOrService> TaxesOrServices { get; set; } = null!;
         public DbSet<Invoice> Invoices { get; set; } = null!;
 
@@ -26,45 +24,18 @@ namespace TaxInvoiceManagment.Persistence
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
             });
 
-            // Asset
-            modelBuilder.Entity<Asset>(entity =>
+            // Taxable Item
+            modelBuilder.Entity<TaxableItem>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Type).IsRequired();
                 entity.Property(e => e.Type).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Address).HasMaxLength(255);
                 entity.Property(e => e.VehicleNumberPlate).HasMaxLength(20);
 
                 entity.HasOne(e => e.User)
-                      .WithMany(u => u.Assets)
-                      .HasForeignKey(e => e.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // Home
-            modelBuilder.Entity<Home>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Type).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Address).HasMaxLength(255);
-
-                entity.HasOne(e => e.User)
-                      .WithMany()
-                      .HasForeignKey(e => e.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // Vehicle
-            modelBuilder.Entity<Vehicle>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Type).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.VehicleNumberPlate).HasMaxLength(20);
-
-                entity.HasOne(e => e.User)
-                      .WithMany()
+                      .WithMany(u => u.TaxableItems)
                       .HasForeignKey(e => e.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
@@ -73,23 +44,11 @@ namespace TaxInvoiceManagment.Persistence
             modelBuilder.Entity<TaxOrService>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.TaxableItemId).IsRequired();
 
-                entity.Property(e => e.AssetId)
-                      .IsRequired(false);
-
-                entity.HasOne(e => e.Asset)
+                entity.HasOne(e => e.TaxableItem)
                       .WithMany(a => a.TaxesOrServices)
-                      .HasForeignKey(e => e.AssetId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(e => e.Home)
-                      .WithMany(h => h.TaxesOrServices)
-                      .HasForeignKey(e => e.HomeId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(e => e.Vehicle)
-                      .WithMany(v => v.TaxesOrServices)
-                      .HasForeignKey(e => e.VehicleId)
+                      .HasForeignKey(e => e.TaxableItemId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 

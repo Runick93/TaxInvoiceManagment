@@ -101,38 +101,38 @@ namespace TaxInvoiceManagment.Persistence.Tests
             Assert.Empty(users);
         }
 
-        // Asset.
+        // Taxable Item.
         [Fact]
-        public async Task Asset_GetAllAsync_ShouldReturnAssets()
+        public async Task TaxableItem_GetAllAsync_ShouldReturnTaxableItems()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
 
             // Act
-            await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
             // Assert
-            var assets = await unitOfWork.Assets.GetAllAsync();
-            Assert.Single(assets);
-            Assert.Equal("Casa de Homero", assets.First().Name);
+            var taxableItems = await unitOfWork.TaxableItems.GetAllAsync();
+            Assert.Single(taxableItems);
+            Assert.Equal("Casa de Homero", taxableItems.First().Name);
         }
 
         [Fact]
-        public async Task Asset_GetByIdAsync_ShouldReturnAsset()
+        public async Task TaxableItem_GetByIdAsync_ShouldReturnTaxableItem()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var asset = new Asset { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
 
             // Act
-            var result = await unitOfWork.Assets.GetByIdAsync(asset.Id);
+            var result = await unitOfWork.TaxableItems.GetByIdAsync(taxableItem.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -140,253 +140,61 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task Asset_AddAsync_ShouldReturnAssetAdded()
+        public async Task TaxableItemAddAsync_ShouldReturnTaxableItemAdded()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
 
             // Act
-            await unitOfWork.Assets.AddAsync(asset);
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
-            var assets = await unitOfWork.Assets.GetAllAsync();
+            var taxableItems = await unitOfWork.TaxableItems.GetAllAsync();
 
             // Assert
-            Assert.Single(assets);
-            Assert.Equal("Casa de Homero", assets.First().Name);
+            Assert.Single(taxableItems);
+            Assert.Equal("Casa de Homero", taxableItems.First().Name);
         }
 
         [Fact]
-        public async Task Asset_UpdateAsync_ShouldReturnAssetUpdated()
+        public async Task TaxableItem_UpdateAsync_ShouldReturnTaxableItemUpdated()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
 
             // Act
-            asset.Name = "Casa Rodante de Homero";
-            await unitOfWork.Assets.UpdateAsync(asset);
-            var updatedAsset = await unitOfWork.Assets.GetByIdAsync(asset.Id);
+            taxableItem.Name = "Casa Rodante de Homero";
+            await unitOfWork.TaxableItems.UpdateAsync(taxableItem);
+            var updatedtaxableItem = await unitOfWork.TaxableItems.GetByIdAsync(taxableItem.Id);
 
             // Assert
-            Assert.NotNull(updatedAsset);
-            Assert.Equal("Casa Rodante de Homero", updatedAsset!.Name);
+            Assert.NotNull(updatedtaxableItem);
+            Assert.Equal("Casa Rodante de Homero", updatedtaxableItem!.Name);
         }
 
         [Fact]
-        public async Task Asset_DeleteAsync_ShouldNotReturnAssetDeleted()
+        public async Task TaxableItem_DeleteAsync_ShouldNotReturnTaxableItemDeleted()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
 
             // Act
-            await unitOfWork.Assets.DeleteAsync(asset.Id);
-            var assets = await unitOfWork.Assets.GetAllAsync();
+            await unitOfWork.TaxableItems.DeleteAsync(taxableItem.Id);
+            var taxableItems = await unitOfWork.TaxableItems.GetAllAsync();
 
             // Assert
-            Assert.Empty(assets);
-        }
-
-        // Home.
-        [Fact]
-        public async Task Home_GetAllAsync_ShouldReturnHomes()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-
-            // Act
-            await unitOfWork.Homes.AddAsync(home);
-            await unitOfWork.SaveChangesAsync();
-
-            // Assert
-            var homes = await unitOfWork.Homes.GetAllAsync();
-            Assert.Single(homes);
-            Assert.Equal("Casa de Homero", homes.First().Name);
-        }
-
-        [Fact]
-        public async Task Home_GetByIdAsync_ShouldReturnHome()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-            await unitOfWork.Homes.AddAsync(home);
-
-            // Act
-            var result = await unitOfWork.Homes.GetByIdAsync(home.Id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("Casa de Homero", result.Name);
-        }
-
-        [Fact]
-        public async Task Home_AddAsync_ShouldReturnHomeAdded()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-
-            // Act
-            await unitOfWork.Homes.AddAsync(home);
-            await unitOfWork.SaveChangesAsync();
-
-            var homes = await unitOfWork.Homes.GetAllAsync();
-
-            // Assert
-            Assert.Single(homes);
-            Assert.Equal("Casa de Homero", homes.First().Name);
-        }
-
-        [Fact]
-        public async Task Home_UpdateAsync_ShouldReturnHomeUpdated()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-            await unitOfWork.Homes.AddAsync(home);
-
-            // Act
-            home.Name = "Casa Rodante de Homero";
-            await unitOfWork.Homes.UpdateAsync(home);
-            var updatedHome = await unitOfWork.Homes.GetByIdAsync(home.Id);
-
-            // Assert
-            Assert.NotNull(updatedHome);
-            Assert.Equal("Casa Rodante de Homero", updatedHome!.Name);
-        }
-
-        [Fact]
-        public async Task Home_DeleteAsync_ShouldNotReturnHomeDeleted()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var home = new Home { Name = "Casa de Homero", Type = "Casa", UserId = 1 };
-            await unitOfWork.Homes.AddAsync(home);
-
-            // Act
-            await unitOfWork.Homes.DeleteAsync(home.Id);
-            var homes = await unitOfWork.Homes.GetAllAsync();
-
-            // Assert
-            Assert.Empty(homes);
-        }
-
-        // Vehicle
-        [Fact]
-        public async Task Vehicle_GetAllAsync_ShouldReturnVehicles()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
-
-            // Act
-            await unitOfWork.Vehicles.AddAsync(vehicle);
-            await unitOfWork.SaveChangesAsync();
-
-            // Assert
-            var vehicles = await unitOfWork.Vehicles.GetAllAsync();
-            Assert.Single(vehicles);
-            Assert.Equal("Auto de Homero", vehicles.First().Name);
-        }
-
-        [Fact]
-        public async Task Vehicle_GetByIdAsync_ShouldReturnVehicle()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
-            await unitOfWork.Vehicles.AddAsync(vehicle);
-
-            // Act
-            var result = await unitOfWork.Vehicles.GetByIdAsync(vehicle.Id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("Auto de Homero", result.Name);
-        }
-
-        [Fact]
-        public async Task Vehicle_AddAsync_ShouldReturnVehicleAdded()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
-
-            // Act
-            await unitOfWork.Vehicles.AddAsync(vehicle);
-            await unitOfWork.SaveChangesAsync();
-
-            var vehicles = await unitOfWork.Vehicles.GetAllAsync();
-
-            // Assert
-            Assert.Single(vehicles);
-            Assert.Equal("Auto de Homero", vehicles.First().Name);
-        }
-
-        [Fact]
-        public async Task Vehicle_UpdateAsync_ShouldReturnVehicleUpdated()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
-            await unitOfWork.Vehicles.AddAsync(vehicle);
-
-            // Act
-            vehicle.Name = "Moto de Homero";
-            await unitOfWork.Vehicles.UpdateAsync(vehicle);
-            var updatedHome = await unitOfWork.Vehicles.GetByIdAsync(vehicle.Id);
-
-            // Assert
-            Assert.NotNull(updatedHome);
-            Assert.Equal("Moto de Homero", updatedHome.Name);
-        }
-
-        [Fact]
-        public async Task Vehicle_DeleteAsync_ShouldNotReturnVehicleDeleted()
-        {
-            // Arrange
-            using var context = DbContextHelper.CreateInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-
-            var vehicle = new Vehicle { Name = "Auto de Homero", Type = "Auto", UserId = 1 };
-            await unitOfWork.Vehicles.AddAsync(vehicle);
-
-            // Act
-            await unitOfWork.Vehicles.DeleteAsync(vehicle.Id);
-            var vehicles = await unitOfWork.Vehicles.GetAllAsync();
-
-            // Assert
-            Assert.Empty(vehicles);
+            Assert.Empty(taxableItems);
         }
 
         // TaxOrService.
@@ -397,7 +205,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType= "Agua", AssetId = 1 };
+            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType= "Agua", TaxableItemId = 1 };
 
             // Act
             await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
@@ -416,7 +224,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", AssetId = 1 };
+            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
             await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
 
             // Act
@@ -434,7 +242,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", AssetId = 1 };
+            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
 
             // Act
             await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
@@ -454,7 +262,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", AssetId = 1 };
+            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
             await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
 
             // Act
@@ -474,7 +282,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService {ServiceName = "Aysa", ServiceType = "Agua", AssetId = 1 };
+            var taxOrService = new TaxOrService {ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
             await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
 
             // Act

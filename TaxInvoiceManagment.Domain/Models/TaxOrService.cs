@@ -23,14 +23,8 @@
         }
 
         public int Id { get; set; } //PK
-        public int? AssetId { get; set; } //FK - Ojo, es nulleable, controlarlo por FluentValidation
-        public Asset Asset { get; set; } = null!; //??
-
-        public int? HomeId { get; set; } // FK - Ojo, es nulleable, controlarlo por FluentValidation
-        public Home Home { get; set; } = null!;
-
-        public int? VehicleId { get; set; } // FK - Ojo, es nulleable, controlarlo por FluentValidation
-        public Vehicle? Vehicle { get; set; } = null!;
+        public int TaxableItemId { get; set; } //FK - Ojo, es nulleable, controlarlo por FluentValidation
+        public TaxableItem TaxableItem { get; set; } = null!; //??
 
 
         public string? ServiceName { get; set; }

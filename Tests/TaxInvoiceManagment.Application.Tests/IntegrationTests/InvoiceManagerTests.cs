@@ -21,11 +21,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
-            var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
+            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 
@@ -53,11 +53,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
-            var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
+            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 
@@ -96,11 +96,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
-            var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
+            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 
@@ -128,11 +128,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
-            var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
+            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 
@@ -163,11 +163,11 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            var asset = new Asset { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.Assets.AddAsync(asset);
+            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
+            await unitOfWork.TaxableItems.AddAsync(taxableItem);
             await unitOfWork.SaveChangesAsync();
 
-            var tax = new TaxOrService { ServiceType = "Luz", AssetId = asset.Id };
+            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
             await unitOfWork.TaxesOrServices.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 

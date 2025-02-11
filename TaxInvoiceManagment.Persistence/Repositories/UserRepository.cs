@@ -20,7 +20,7 @@ namespace TaxInvoiceManagment.Persistence.Repositories
         public async Task<User?> GetUserWithAssetsAsync(int id)
         {
             return await _context.Users
-                .Include(u => u.Assets)
+                .Include(u => u.TaxableItems)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
     }
