@@ -13,7 +13,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
 
             // Act
             await unitOfWork.Users.AddAsync(user);
@@ -22,7 +22,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             // Assert
             var users = await unitOfWork.Users.GetAllAsync();
             Assert.Single(users);
-            Assert.Equal("Homero Simpson", users.First().Name);
+            Assert.Equal("Homero Simpson", users.First().UserName);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" , Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com" , Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
 
             // Act
@@ -40,7 +40,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Homero Simpson", result.Name);
+            Assert.Equal("Homero Simpson", result.UserName);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
 
             // Act
             await unitOfWork.Users.AddAsync(user);
@@ -60,7 +60,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
 
             // Assert
             Assert.Single(users);
-            Assert.Equal("Homero Simpson", users.First().Name);
+            Assert.Equal("Homero Simpson", users.First().UserName);
         }
 
         [Fact]
@@ -70,17 +70,17 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
 
             // Act
-            user.Name = "Homero J Simpson";
+            user.UserName = "Homero J Simpson";
             await unitOfWork.Users.UpdateAsync(user);
             var updatedUser = await unitOfWork.Users.GetByIdAsync(user.Id);
 
             // Assert
             Assert.NotNull(updatedUser);
-            Assert.Equal("Homero J Simpson", updatedUser!.Name);
+            Assert.Equal("Homero J Simpson", updatedUser!.UserName);
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
 
             // Act

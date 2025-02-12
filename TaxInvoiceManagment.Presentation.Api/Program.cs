@@ -3,12 +3,25 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using TaxInvoiceManagment.Persistence;
 using TaxInvoiceManagment.Application.Validators;
+using TaxInvoiceManagment.Application.Interfaces;
+using TaxInvoiceManagment.Domain.Interfaces;
+using TaxInvoiceManagment.Persistence.Managers;
+using TaxInvoiceManagment.Application.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<TaxInvoiceManagmentDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IUserManager, UserManager>();
+builder.Services.AddScoped<ITaxableItemManager, TaxableItemManager>();
+builder.Services.AddScoped<ITaxOrServiceManager, TaxOrServiceManager>();
+builder.Services.AddScoped<IInvoiceManager, InvoiceManager>();
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();

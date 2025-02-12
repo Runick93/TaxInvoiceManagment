@@ -7,7 +7,7 @@ namespace TaxInvoiceManagment.Application.Validators
     {
         public UserValidator()
         {
-            RuleFor(u => u.Name)
+            RuleFor(u => u.UserName)
                 .NotEmpty().WithMessage("El nombre es obligatorio.")
                 .MaximumLength(100).WithMessage("El nombre no puede superar los 100 caracteres.");
 

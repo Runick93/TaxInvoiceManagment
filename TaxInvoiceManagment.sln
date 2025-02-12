@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxInvoiceManagment.Persist
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxInvoiceManagment.Application.Tests", "Tests\TaxInvoiceManagment.Application.Tests\TaxInvoiceManagment.Application.Tests.csproj", "{9E375FE7-3FC1-4293-A3C4-2B315786ED81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxInvoiceManagment.Presentation.Web", "TaxInvoiceManagment.Presentation.Web\TaxInvoiceManagment.Presentation.Web.csproj", "{035EA1E7-93F7-4DB0-9655-AB2116D73035}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,10 +47,6 @@ Global
 		{9E375FE7-3FC1-4293-A3C4-2B315786ED81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E375FE7-3FC1-4293-A3C4-2B315786ED81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E375FE7-3FC1-4293-A3C4-2B315786ED81}.Release|Any CPU.Build.0 = Release|Any CPU
-		{035EA1E7-93F7-4DB0-9655-AB2116D73035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{035EA1E7-93F7-4DB0-9655-AB2116D73035}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{035EA1E7-93F7-4DB0-9655-AB2116D73035}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{035EA1E7-93F7-4DB0-9655-AB2116D73035}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

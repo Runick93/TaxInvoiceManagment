@@ -3,6 +3,7 @@ using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.Persistence
 {
+    // dotnet ef migrations add InitialCreate --project TaxInvoiceManagment.Persistence --startup-project TaxInvoiceManagment.Presentation.Api
     public class TaxInvoiceManagmentDbContext : DbContext
     {
         public DbSet<User> Users { get; set; } = null!;
@@ -20,7 +21,7 @@ namespace TaxInvoiceManagment.Persistence
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.UserName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(255);
             });

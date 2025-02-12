@@ -17,7 +17,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
             var unitOfWork = new UnitOfWork(context);
             var invoiceManager = new InvoiceManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
@@ -49,7 +49,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
             var unitOfWork = new UnitOfWork(context);
             var invoiceManager = new InvoiceManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
@@ -92,7 +92,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
             var unitOfWork = new UnitOfWork(context);
             var invoiceManager = new InvoiceManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
@@ -124,7 +124,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
             var unitOfWork = new UnitOfWork(context);
             var invoiceManager = new InvoiceManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
@@ -159,7 +159,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
             var unitOfWork = new UnitOfWork(context);
             var invoiceManager = new InvoiceManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
+            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
