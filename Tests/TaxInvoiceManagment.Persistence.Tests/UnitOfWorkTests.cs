@@ -13,7 +13,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
 
             // Act
             await unitOfWork.Users.AddAsync(user);
@@ -32,7 +32,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" , Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
 
             // Act
@@ -50,7 +50,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
 
             // Act
             await unitOfWork.Users.AddAsync(user);
@@ -70,7 +70,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
 
             // Act
@@ -90,7 +90,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await unitOfWork.Users.AddAsync(user);
 
             // Act

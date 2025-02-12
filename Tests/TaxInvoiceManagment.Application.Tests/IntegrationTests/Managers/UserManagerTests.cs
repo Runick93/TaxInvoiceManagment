@@ -1,11 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
-using TaxInvoiceManagment.Application.Managers;
+﻿using TaxInvoiceManagment.Application.Managers;
 using TaxInvoiceManagment.Domain.Models;
 using TaxInvoiceManagment.Persistence.Managers;
 
-namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
+namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
 {
     public class UserManagerIntegrationTests
     {
@@ -17,10 +14,10 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             var unitOfWork = new UnitOfWork(context);
             var userManager = new UserManager(unitOfWork);
 
-            var user1 = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user1 = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await userManager.CreateUser(user1);
 
-            var user2 = new User { Name = "Bart Simpson", Email = "bart@mail.com" };
+            var user2 = new User { Name = "Bart Simpson", Email = "bart@mail.com", Password = "Passw0rd" };
             await userManager.CreateUser(user2);
 
             // Act
@@ -38,7 +35,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             var unitOfWork = new UnitOfWork(context);
             var userManager = new UserManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await userManager.CreateUser(user);
 
             // Act
@@ -69,7 +66,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             var unitOfWork = new UnitOfWork(context);
             var userManager = new UserManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
 
             // Act
             var result = await userManager.CreateUser(user);
@@ -89,7 +86,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             var unitOfWork = new UnitOfWork(context);
             var userManager = new UserManager(unitOfWork);
 
-            var user = new User {Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await userManager.CreateUser(user);
 
             // Act
@@ -110,7 +107,7 @@ namespace TaxInvoiceManagment.Application.Tests.IntegrationTests
             var unitOfWork = new UnitOfWork(context);
             var userManager = new UserManager(unitOfWork);
 
-            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com" };
+            var user = new User { Name = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
             await userManager.CreateUser(user);
 
             // Act

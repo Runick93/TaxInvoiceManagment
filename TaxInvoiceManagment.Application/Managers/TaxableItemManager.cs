@@ -15,18 +15,18 @@ namespace TaxInvoiceManagment.Application.Managers
 
         public async Task<ICollection<TaxableItem>> GetAllAssets()
         {
-            var assets = await _unitOfWork.TaxableItems.GetAllAsync();
-            return assets.ToList();
+            var taxableItem = await _unitOfWork.TaxableItems.GetAllAsync();
+            return taxableItem.ToList();
         }
 
         public async Task<TaxableItem> GetAssetById(int id)
         {
-            var asset = await _unitOfWork.TaxableItems.GetByIdAsync(id);
-            if (asset == null)
+            var taxableItem = await _unitOfWork.TaxableItems.GetByIdAsync(id);
+            if (taxableItem == null)
             {
                 throw new KeyNotFoundException($"Asset with ID {id} was not found.");
             }
-            return asset;
+            return taxableItem;
         }
 
         public async Task<bool> CreateAsset(TaxableItem asset)

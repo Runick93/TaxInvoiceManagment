@@ -12,10 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\TaxInvoiceManagment.Application\TaxInvoiceManagment.Application.csproj" />
     <ProjectReference Include="..\TaxInvoiceManagment.Persistence\TaxInvoiceManagment.Persistence.csproj" />
   </ItemGroup>
 
