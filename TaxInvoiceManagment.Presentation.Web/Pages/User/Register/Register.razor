@@ -1,0 +1,70 @@
+﻿@namespace TaxInvoiceManagment.Presentation.Web.Pages.User
+@layout UserLayout
+@page "/user/register"
+
+
+<!--
+<div class="main__b__1">
+    <div class="register">
+        <h3>Registration</h3>
+        <Form Model="@_user">
+            <FormItem>
+                <Input Placeholder="User Name" @bind-Value="@context.UserName" Size="@InputSize.Large">
+            </FormItem>
+
+            <FormItem>
+                <Input Placeholder="Mail Box" @bind-Value="@context.Mail" Size="@InputSize.Large">
+            </FormItem>
+
+            <FormItem>
+                <Input Placeholder="At Least 6-Digit Password, Case Sensitive" @bind-Value="@context.Password" Size="@InputSize.Large" Type="@InputType.Password">
+            </FormItem>
+
+            <FormItem>
+                <Input Placeholder="Confirm Password" @bind-Value="@context.ConfirmPassword" Size="@InputSize.Large" Type="@InputType.Password">
+            </FormItem>
+
+            <FormItem>
+                <Button Type="@ButtonType.Primary" Size="@ButtonSize.Large" OnClick="Reg" class="submit">Register</Button>
+                <a class="login" href="/user/login">Log in with an existing account</a>
+            </FormItem>
+        </Form>
+    </div>
+</div>
+-->
+
+ <div class="main__b__1">
+    <div class="register">
+        <h3>Registration</h3>
+        <Form Model = "@_userDto">
+            <FormItem>
+                <AntDesign.Input Placeholder="User Name" @bind-Value="@_userDto.UserName" Size="@InputSize.Large">
+                </AntDesign.Input>
+            </FormItem>
+      
+            <FormItem>
+                <AntDesign.Input Placeholder="Mail Box" @bind-Value="@_userDto.Email" Size="@InputSize.Large">
+                </AntDesign.Input>
+            </FormItem>
+         
+            <FormItem>
+                <AntDesign.Input Placeholder="Password" @bind-Value="@_userDto.Password" Size="@InputSize.Large" Type="@InputType.Password">
+                </AntDesign.Input>
+            </FormItem>
+
+            <FormItem>
+                <AntDesign.Input Placeholder="Confirm Password" @bind-Value="@_userDto.ConfirmPassword" Size="@InputSize.Large" Type="@InputType.Password">
+                </AntDesign.Input>
+            </FormItem>
+             
+
+            <FormItem>
+                <Button Type="@ButtonType.Primary" Size="@ButtonSize.Large" OnClick="Reg" class="submit">Register</Button>
+                <a class="login" href="/user/login">Log in with an existing account</a>
+            </FormItem>
+           
+        </Form>
+    </div>
+</div>
+
+

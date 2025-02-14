@@ -44,27 +44,31 @@ namespace TaxInvoiceManagment.API.Controllers
                 return BadRequest("User data is required.");
             }
 
-            bool created = await _userManager.CreateUser(user);
-            if (!created)
+            var result = await _userManager.CreateUser(user);
+
+            if (!result.IsSuccess)
             {
-                return StatusCode(500, "User could not be created.");
+                return BadRequest(result.Errors);
             }
+
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] User user)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] User user)
         {
-            if (user == null || user.Id == 0)
+            if (user == null || user.Id != id)
             {
-                return BadRequest("Valid user data is required.");
+                return BadRequest("Invalid user data.");
             }
 
-            bool updated = await _userManager.UpdateUser(user);
-            if (!updated)
+            var result = await _userManager.UpdateUser(user);
+
+            if (!result.IsSuccess)
             {
-                return StatusCode(500, "User could not be updated.");
+                return BadRequest(result.Errors);
             }
+
             return NoContent();
         }
 

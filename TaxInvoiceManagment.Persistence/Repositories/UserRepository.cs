@@ -17,11 +17,14 @@ namespace TaxInvoiceManagment.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<User?> GetUserWithAssetsAsync(int id)
+        public async Task<bool> ExistsByEmail(string email)
         {
-            return await _context.Users
-                .Include(u => u.TaxableItems)
-                .FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> ExistsByUserName(string userName)
+        {
+            return await _context.Users.AnyAsync(u => u.UserName == userName);
         }
     }
 }

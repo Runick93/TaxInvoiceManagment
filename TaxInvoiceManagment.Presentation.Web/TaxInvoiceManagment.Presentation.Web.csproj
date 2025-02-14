@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AntDesign.Charts" Version="0.4.0" />
+    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.1.4" />
+    <PackageReference Include="AntDesign.ProLayout" Version="1.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TaxInvoiceManagment.Application\TaxInvoiceManagment.Application.csproj" />
+    <ProjectReference Include="..\TaxInvoiceManagment.Domain\TaxInvoiceManagment.Domain.csproj" />
+    <ProjectReference Include="..\TaxInvoiceManagment.Persistence\TaxInvoiceManagment.Persistence.csproj" />
+  </ItemGroup>
+  
+</Project>

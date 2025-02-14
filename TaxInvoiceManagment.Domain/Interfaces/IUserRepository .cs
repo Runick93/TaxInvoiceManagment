@@ -4,6 +4,7 @@ namespace TaxInvoiceManagment.Domain.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
-        Task<User?> GetUserWithAssetsAsync(int id);
+        Task<bool> ExistsByEmail(string email);
+        Task<bool> ExistsByUserName(string userName);
     }
 }
