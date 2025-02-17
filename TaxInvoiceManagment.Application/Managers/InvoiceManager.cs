@@ -1,4 +1,6 @@
-﻿using TaxInvoiceManagment.Application.Interfaces;
+﻿using FluentValidation;
+using TaxInvoiceManagment.Application.Dtos;
+using TaxInvoiceManagment.Application.Interfaces;
 using TaxInvoiceManagment.Domain.Interfaces;
 using TaxInvoiceManagment.Domain.Models;
 
@@ -7,48 +9,145 @@ namespace TaxInvoiceManagment.Application.Managers
     public class InvoiceManager : IInvoiceManager
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IValidator<InvoiceDto> _invoiceValidator;
 
-        public InvoiceManager(IUnitOfWork unitOfWork)
+        public InvoiceManager(IUnitOfWork unitOfWork, IValidator<InvoiceDto> invoiceValidator)
         {
             _unitOfWork = unitOfWork;
+            _invoiceValidator = invoiceValidator;
         }
 
-        public async Task<ICollection<Invoice>> GetAllInvoices()
+        public async Task<Result<IEnumerable<InvoiceDto>>> GetAllInvoices()
         {
             var invoices = await _unitOfWork.Invoices.GetAllAsync();
-            return invoices.ToList();
+            return Result<IEnumerable<InvoiceDto>>.Success(invoices.Select(i => new InvoiceDto
+            {
+                Id = i.Id,
+                TaxOrServiceId = i.TaxOrServiceId,
+                Number = i.Number,
+                Month = i.Month,
+                InvoiceAmount = i.InvoiceAmount,
+                PaymentStatus = i.PaymentStatus,
+                PaymentDate = i.PaymentDate,
+                PrimaryDueDate = i.PrimaryDueDate,
+                SecondaryDueDate = i.SecondaryDueDate,
+                InvoiceReceiptPath = i.InvoiceReceiptPath,
+                PaymentReceiptPath = i.PaymentReceiptPath,
+                Notes = i.Notes
+            }));
         }
 
-        public async Task<Invoice> GetInvoiceById(int id)
+        public async Task<Result<InvoiceDto>> GetInvoiceById(int id)
         {
             var invoice = await _unitOfWork.Invoices.GetByIdAsync(id);
+
             if (invoice == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {id} was not found.");
+                return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro la factura." });
             }
-            return invoice;
+
+            return Result<InvoiceDto>.Success(new InvoiceDto
+            {
+                Id = invoice.Id,
+                TaxOrServiceId = invoice.TaxOrServiceId,
+                Number = invoice.Number,
+                Month = invoice.Month,
+                InvoiceAmount = invoice.InvoiceAmount,
+                PaymentStatus = invoice.PaymentStatus,
+                PaymentDate = invoice.PaymentDate,
+                PrimaryDueDate = invoice.PrimaryDueDate,
+                SecondaryDueDate = invoice.SecondaryDueDate,
+                InvoiceReceiptPath = invoice.InvoiceReceiptPath,
+                PaymentReceiptPath = invoice.PaymentReceiptPath,
+                Notes = invoice.Notes
+            });
         }
 
-        public async Task<bool> CreateInvoice(Invoice invoice)
+        public async Task<Result<InvoiceDto>> CreateInvoice(InvoiceDto invoiceDto)
         {
+            var validationResult = await _invoiceValidator.ValidateAsync(invoiceDto);
+            if (!validationResult.IsValid)
+            {
+                return Result<InvoiceDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+            }
+
+            var taxOrService = await _unitOfWork.TaxesOrServices.GetByIdAsync(invoiceDto.TaxOrServiceId);
+            if (taxOrService == null)
+            {
+                return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio asociado." });
+            }
+
+            var invoice = new Invoice
+            {
+                TaxOrServiceId = invoiceDto.TaxOrServiceId,
+                Number = invoiceDto.Number,
+                Month = invoiceDto.Month,
+                InvoiceAmount = invoiceDto.InvoiceAmount,
+                PaymentStatus = invoiceDto.PaymentStatus,
+                PaymentDate = invoiceDto.PaymentDate,
+                PrimaryDueDate = invoiceDto.PrimaryDueDate,
+                SecondaryDueDate = invoiceDto.SecondaryDueDate,
+                InvoiceReceiptPath = invoiceDto.InvoiceReceiptPath,
+                PaymentReceiptPath = invoiceDto.PaymentReceiptPath,
+                Notes = invoiceDto.Notes
+            };
+
             await _unitOfWork.Invoices.AddAsync(invoice);
-            int rowsAffected = await _unitOfWork.SaveChangesAsync();
-            return rowsAffected > 0;
+            await _unitOfWork.SaveChangesAsync();
+
+            invoiceDto.Id = invoice.Id;
+            return Result<InvoiceDto>.Success(invoiceDto);
         }
 
-        public async Task<bool> UpdateInvoice(Invoice invoice)
+        public async Task<Result<InvoiceDto>> UpdateInvoice(InvoiceDto invoiceDto)
         {
-            await _unitOfWork.Invoices.UpdateAsync(invoice);
-            int rowsAffected = await _unitOfWork.SaveChangesAsync();
-            return rowsAffected > 0;
+            var validationResult = await _invoiceValidator.ValidateAsync(invoiceDto);
+            if (!validationResult.IsValid)
+            {
+                return Result<InvoiceDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+            }
+
+            var existingInvoice = await _unitOfWork.Invoices.GetByIdAsync(invoiceDto.Id);
+            if (existingInvoice == null)
+            {
+                return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro la factura." });
+            }
+
+            existingInvoice.Number = invoiceDto.Number;
+            existingInvoice.Month = invoiceDto.Month;
+            existingInvoice.InvoiceAmount = invoiceDto.InvoiceAmount;
+            existingInvoice.PaymentStatus = invoiceDto.PaymentStatus;
+            existingInvoice.PaymentDate = invoiceDto.PaymentDate;
+            existingInvoice.PrimaryDueDate = invoiceDto.PrimaryDueDate;
+            existingInvoice.SecondaryDueDate = invoiceDto.SecondaryDueDate;
+            existingInvoice.InvoiceReceiptPath = invoiceDto.InvoiceReceiptPath;
+            existingInvoice.PaymentReceiptPath = invoiceDto.PaymentReceiptPath;
+            existingInvoice.Notes = invoiceDto.Notes;
+
+            await _unitOfWork.Invoices.UpdateAsync(existingInvoice);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result<InvoiceDto>.Success(invoiceDto);
         }
 
-        public async Task<bool> DeleteInvoice(int id)
+        public async Task<Result<bool>> DeleteInvoice(int id)
         {
-            await _unitOfWork.Invoices.DeleteAsync(id);
-            int rowsAffected = await _unitOfWork.SaveChangesAsync();
-            return rowsAffected > 0;
+            var existingInvoice = await _unitOfWork.Invoices.GetByIdAsync(id);
+            if (existingInvoice == null)
+            {
+                return Result<bool>.Failure(new List<string> { $"No se encontro la factura." });
+            }
+
+            try
+            {
+                await _unitOfWork.Invoices.DeleteAsync(id);
+                int rowsAffected = await _unitOfWork.SaveChangesAsync();
+                return Result<bool>.Success(rowsAffected > 0);
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Failure(new List<string> { $"Error al eliminar la factura: {ex.Message}."});
+            }
         }
     }
-
 }

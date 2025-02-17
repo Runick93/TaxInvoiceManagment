@@ -2,12 +2,6 @@
 {
     public class User
     {
-        /*
-         * Id - PK.
-         * UserName.
-         * Email.
-         * Password.
-         */
         public int Id { get; set; } //PK
         public string UserName { get; set; } = null!;
         public string Email { get; set; } = null!;

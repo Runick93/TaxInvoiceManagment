@@ -1,16 +1,11 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaxInvoiceManagment.Domain.Models;
+using TaxInvoiceManagment.Application.Dtos;
 
 namespace TaxInvoiceManagment.Application.Validators
 {
-    public class InvoiceValidator : AbstractValidator<Invoice>
+    public class InvoiceDtoValidator : AbstractValidator<InvoiceDto>
     {
-        public InvoiceValidator()
+        public InvoiceDtoValidator()
         {
             RuleFor(i => i.TaxOrServiceId)
                 .GreaterThan(0).WithMessage("Debe estar asociado a un servicio válido.");

@@ -40,10 +40,10 @@ builder.Services.AddScoped<ITaxOrServiceManager, TaxOrServiceManager>();
 builder.Services.AddScoped<IInvoiceManager, InvoiceManager>();
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TaxableItemValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TaxOrServiceValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<InvoiceValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TaxableItemDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TaxOrServiceDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<InvoiceDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>();
 
 

@@ -1,13 +1,13 @@
-﻿using TaxInvoiceManagment.Domain.Models;
+﻿using TaxInvoiceManagment.Application.Dtos;
 
 namespace TaxInvoiceManagment.Application.Interfaces
 {
     public interface ITaxOrServiceManager
     {
-        Task<bool> CreateTaxOrService(TaxOrService taxOrService);
-        Task<bool> DeleteTaxOrService(int id);
-        Task<ICollection<TaxOrService>> GetAllTaxesOrServices();
-        Task<TaxOrService> GetTaxOrServiceById(int id);
-        Task<bool> UpdateTaxOrService(TaxOrService taxOrService);
+        Task<Result<TaxOrServiceDto>> CreateTaxOrService(TaxOrServiceDto taxOrServiceDto);
+        Task<Result<IEnumerable<TaxOrServiceDto>>> GetAllTaxesOrServices();
+        Task<Result<TaxOrServiceDto>> GetTaxOrServiceById(int id);
+        Task<Result<TaxOrServiceDto>> UpdateTaxOrService(TaxOrServiceDto taxOrServiceDto);
+        Task<Result<bool>> DeleteTaxOrService(int id);
     }
 }

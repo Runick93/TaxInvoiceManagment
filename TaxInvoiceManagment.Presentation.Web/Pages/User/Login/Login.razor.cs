@@ -18,13 +18,13 @@ namespace TaxInvoiceManagment.Presentation.Web.Pages.User
 
         public void HandleSubmit()
         {
-            if (_model.UserName == "admin" && _model.Password == "ant.design")
-            {
-                NavigationManager.NavigateTo("/");
-                return;
-            }
+            //if (_model.UserName == "admin" && _model.Password == "ant.design")
+            //{
+            //    NavigationManager.NavigateTo("/");
+            //    return;
+            //}
 
-            if (_model.UserName == "user" && _model.Password == "ant.design") NavigationManager.NavigateTo("/");
+            //if (_model.UserName == "user" && _model.Password == "ant.design") NavigationManager.NavigateTo("/");
         }
 
         public async Task GetCaptcha()

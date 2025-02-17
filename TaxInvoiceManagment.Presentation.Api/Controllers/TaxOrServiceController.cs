@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.API.Controllers
 {
@@ -18,64 +18,40 @@ namespace TaxInvoiceManagment.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var taxesOrServices = await _taxOrServiceManager.GetAllTaxesOrServices();
-            return Ok(taxesOrServices);
+            var result = await _taxOrServiceManager.GetAllTaxesOrServices();
+            return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var taxOrService = await _taxOrServiceManager.GetTaxOrServiceById(id);
-                return Ok(taxOrService);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var result = await _taxOrServiceManager.GetTaxOrServiceById(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
+            return Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TaxOrService taxOrService)
+        public async Task<IActionResult> Create([FromBody] TaxOrServiceDto taxOrServiceDto)
         {
-            if (taxOrService == null)
-            {
-                return BadRequest("TaxOrService data is required.");
-            }
-
-            bool created = await _taxOrServiceManager.CreateTaxOrService(taxOrService);
-            if (!created)
-            {
-                return StatusCode(500, "TaxOrService could not be created.");
-            }
-            return CreatedAtAction(nameof(GetById), new { id = taxOrService.Id }, taxOrService);
+            var result = await _taxOrServiceManager.CreateTaxOrService(taxOrServiceDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+            return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] TaxOrService taxOrService)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] TaxOrServiceDto taxOrServiceDto)
         {
-            if (taxOrService == null || taxOrService.Id == 0)
-            {
-                return BadRequest("Valid TaxOrService data is required.");
-            }
-
-            bool updated = await _taxOrServiceManager.UpdateTaxOrService(taxOrService);
-            if (!updated)
-            {
-                return StatusCode(500, "TaxOrService could not be updated.");
-            }
+            if (taxOrServiceDto.Id != id) return BadRequest("Mismatched ID.");
+            var result = await _taxOrServiceManager.UpdateTaxOrService(taxOrServiceDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _taxOrServiceManager.DeleteTaxOrService(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"TaxOrService with ID {id} was not found or could not be deleted." });
-            }
+            var result = await _taxOrServiceManager.DeleteTaxOrService(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
             return NoContent();
         }
     }

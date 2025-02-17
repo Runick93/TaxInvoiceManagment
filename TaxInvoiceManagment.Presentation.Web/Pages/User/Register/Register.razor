@@ -33,10 +33,10 @@
 </div>
 -->
 
- <div class="main__b__1">
-    <div class="register">
+ <div class="main__b__0">
+    <div class="login">
         <h3>Registration</h3>
-        <Form Model = "@_userDto">
+        <Form Model="@_userDto" OnFinish="Reg">
             <FormItem>
                 <AntDesign.Input Placeholder="User Name" @bind-Value="@_userDto.UserName" Size="@InputSize.Large">
                 </AntDesign.Input>
@@ -59,7 +59,7 @@
              
 
             <FormItem>
-                <Button Type="@ButtonType.Primary" Size="@ButtonSize.Large" OnClick="Reg" class="submit">Register</Button>
+                <Button Type="@ButtonType.Primary" HtmlType="submit" Class="submit" Size="@ButtonSize.Large" Block>Register</Button>
                 <a class="login" href="/user/login">Log in with an existing account</a>
             </FormItem>
            

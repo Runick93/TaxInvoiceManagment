@@ -1,16 +1,11 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaxInvoiceManagment.Domain.Models;
+using TaxInvoiceManagment.Application.Dtos;
 
 namespace TaxInvoiceManagment.Application.Validators
 {
-    public class TaxableItemValidator : AbstractValidator<TaxableItem>
+    public class TaxableItemDtoValidator : AbstractValidator<TaxableItemDto>
     {
-        public TaxableItemValidator()
+        public TaxableItemDtoValidator()
         {
             RuleFor(t => t.UserId)
                 .GreaterThan(0).WithMessage("Debe asociarse a un usuario válido.");

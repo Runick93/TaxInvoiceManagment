@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.API.Controllers
 {
@@ -18,68 +18,40 @@ namespace TaxInvoiceManagment.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var users = await _userManager.GetAllUsers();
-            return Ok(users);
+            var result = await _userManager.GetAllUsers();
+            return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var user = await _userManager.GetUserById(id);
-                return Ok(user);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var result = await _userManager.GetUserById(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
+            return Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] User user)
+        public async Task<IActionResult> Create([FromBody] UserDto userDto)
         {
-            if (user == null)
-            {
-                return BadRequest("User data is required.");
-            }
-
-            var result = await _userManager.CreateUser(user);
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            var result = await _userManager.CreateUser(userDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+            return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] User user)
+        public async Task<IActionResult> Update(int id, [FromBody] UserDto userDto)
         {
-            if (user == null || user.Id != id)
-            {
-                return BadRequest("Invalid user data.");
-            }
-
-            var result = await _userManager.UpdateUser(user);
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-
+            if (userDto.Id != id) return BadRequest("Mismatched ID.");
+            var result = await _userManager.UpdateUser(userDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _userManager.DeleteUser(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"User with ID {id} was not found or could not be deleted." });
-            }
+            var result = await _userManager.DeleteUser(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
             return NoContent();
         }
     }

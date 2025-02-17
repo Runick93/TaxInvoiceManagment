@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.API.Controllers
 {
@@ -18,64 +18,40 @@ namespace TaxInvoiceManagment.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var taxableItems = await _taxableItemManager.GetAllAssets();
-            return Ok(taxableItems);
+            var result = await _taxableItemManager.GetAllTaxableItems();
+            return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var taxableItem = await _taxableItemManager.GetAssetById(id);
-                return Ok(taxableItem);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var result = await _taxableItemManager.GetTaxableItemById(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
+            return Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TaxableItem asset)
+        public async Task<IActionResult> Create([FromBody] TaxableItemDto taxableItemDto)
         {
-            if (asset == null)
-            {
-                return BadRequest("TaxableItem data is required.");
-            }
-
-            bool created = await _taxableItemManager.CreateAsset(asset);
-            if (!created)
-            {
-                return StatusCode(500, "TaxableItem could not be created.");
-            }
-            return CreatedAtAction(nameof(GetById), new { id = asset.Id }, asset);
+            var result = await _taxableItemManager.CreateTaxableItem(taxableItemDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+            return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] TaxableItem asset)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] TaxableItemDto taxableItemDto)
         {
-            if (asset == null || asset.Id == 0)
-            {
-                return BadRequest("Valid TaxableItem data is required.");
-            }
-
-            bool updated = await _taxableItemManager.UpdateAsset(asset);
-            if (!updated)
-            {
-                return StatusCode(500, "TaxableItem could not be updated.");
-            }
+            if (taxableItemDto.Id != id) return BadRequest("Mismatched ID.");
+            var result = await _taxableItemManager.UpdateTaxableItem(taxableItemDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _taxableItemManager.DeleteAsset(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"TaxableItem with ID {id} was not found or could not be deleted." });
-            }
+            var result = await _taxableItemManager.DeleteTaxableItem(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
             return NoContent();
         }
     }

@@ -1,161 +1,250 @@
-﻿using TaxInvoiceManagment.Application.Managers;
+﻿using TaxInvoiceManagment.Application.Dtos;
+using TaxInvoiceManagment.Application.Managers;
+using TaxInvoiceManagment.Application.Tests;
+using TaxInvoiceManagment.Application.Validators;
 using TaxInvoiceManagment.Domain.Models;
 using TaxInvoiceManagment.Persistence.Managers;
 
-namespace TaxInvoiceManagment.Application.Tests.IntegrationTests.Managers
+public class TaxOrServiceManagerTests
 {
-    public class TaxOrServiceManagerTests
+    [Fact]
+    public async Task GetAllTaxesOrServices_ShouldReturnAllTaxesOrServices()
     {
-        [Fact]
-        public async Task GetAllTaxesOrServices_ShouldReturnAllTaxesOrServices()
+        // Arrange
+        using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
+        var unitOfWork = new UnitOfWork(context);
+        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+
+        var user = new User 
+        { 
+            UserName = "Homero Simpson", 
+            Email = "homero@mail.com", 
+            Password = "Passw0rd!" 
+        };
+        await unitOfWork.Users.AddAsync(user);
+        await unitOfWork.SaveChangesAsync();
+
+        var taxableItem = new TaxableItem 
         {
-            // Arrange
-            using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-            var taxOrServiceManager = new TaxOrServiceManager(unitOfWork);
+            Name = "Casa de Homero", 
+            Type = "Casa", 
+            UserId = 1
+        };
+        await unitOfWork.TaxableItems.AddAsync(taxableItem);
+        await unitOfWork.SaveChangesAsync();
 
-            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
-            await unitOfWork.Users.AddAsync(user);
-            await unitOfWork.SaveChangesAsync();
+        var taxOrService1 = new TaxOrServiceDto 
+        { 
+            ServiceName = "Edesur" , 
+            Owner = "Homero Simpson",
+            ServiceType = "Luz", 
+            TaxableItemId = 1 
+        };
+        await taxOrServiceManager.CreateTaxOrService(taxOrService1);
 
-            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.TaxableItems.AddAsync(taxableItem);
-            await unitOfWork.SaveChangesAsync();
-
-            var tax1 = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
-            var tax2 = new TaxOrService { ServiceType = "Agua", TaxableItemId = taxableItem.Id };
-            await taxOrServiceManager.CreateTaxOrService(tax1);
-            await taxOrServiceManager.CreateTaxOrService(tax2);
-
-            // Act
-            var taxesOrServices = await taxOrServiceManager.GetAllTaxesOrServices();
-
-            // Assert
-            Assert.Equal(2, taxesOrServices.Count);
-        }
-
-        [Fact]
-        public async Task GetTaxOrServiceById_ShouldReturnCorrectTaxOrService()
+        var taxOrService2 = new TaxOrServiceDto 
         {
-            // Arrange
-            using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-            var taxOrServiceManager = new TaxOrServiceManager(unitOfWork);
+            ServiceName = "Aysa", 
+            Owner = "Homero Simpson", 
+            ServiceType = "Agua", 
+            TaxableItemId = 1 
+        };
+        await taxOrServiceManager.CreateTaxOrService(taxOrService2);
 
-            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
-            await unitOfWork.Users.AddAsync(user);
-            await unitOfWork.SaveChangesAsync();
+        // Act
+        var result = await taxOrServiceManager.GetAllTaxesOrServices();
 
-            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.TaxableItems.AddAsync(taxableItem);
-            await unitOfWork.SaveChangesAsync();
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(2, result.Value.Count());
+    }
 
-            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
-            await taxOrServiceManager.CreateTaxOrService(tax);
+    [Fact]
+    public async Task GetTaxOrServiceById_ShouldReturnCorrectTaxOrService()
+    {
+        // Arrange
+        using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
+        var unitOfWork = new UnitOfWork(context);
+        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
 
-            // Act
-            var result = await taxOrServiceManager.GetTaxOrServiceById(tax.Id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("Luz", result.ServiceType);
-        }
-
-        [Fact]
-        public async Task GetTaxOrServiceById_ShouldThrowKeyNotFoundExceptionForNonexistentTaxOrService()
+        var user = new User 
         {
-            // Arrange
-            using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-            var taxOrServiceManager = new TaxOrServiceManager(unitOfWork);
+            UserName = "Homero Simpson",
+            Email = "homero@mail.com", 
+            Password = "Passw0rd!" 
+        };
+        await unitOfWork.Users.AddAsync(user);
+        await unitOfWork.SaveChangesAsync();
 
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => taxOrServiceManager.GetTaxOrServiceById(999));
-        }
-
-        [Fact]
-        public async Task CreateTaxOrService_ShouldAddTaxOrServiceToDatabase()
+        var taxableItem = new TaxableItem 
         {
-            // Arrange
-            using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-            var taxOrServiceManager = new TaxOrServiceManager(unitOfWork);
+            Name = "Casa de Homero", 
+            Type = "Casa", 
+            UserId = user.Id
+        };
+        await unitOfWork.TaxableItems.AddAsync(taxableItem);
+        await unitOfWork.SaveChangesAsync();
 
-            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
-            await unitOfWork.Users.AddAsync(user);
-            await unitOfWork.SaveChangesAsync();
-
-            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.TaxableItems.AddAsync(taxableItem);
-            await unitOfWork.SaveChangesAsync();
-
-            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
-
-            // Act
-            var result = await taxOrServiceManager.CreateTaxOrService(tax);
-
-            // Assert
-            Assert.True(result);
-            var taxesOrServices = await taxOrServiceManager.GetAllTaxesOrServices();
-            Assert.Single(taxesOrServices);
-            Assert.Equal("Luz", taxesOrServices.First().ServiceType);
-        }
-
-        [Fact]
-        public async Task UpdateTaxOrService_ShouldModifyTaxOrServiceInDatabase()
+        var taxOrService = new TaxOrServiceDto 
         {
-            // Arrange
-            using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-            var taxOrServiceManager = new TaxOrServiceManager(unitOfWork);
+            ServiceName = "Edesur", 
+            Owner = "Homero Simpson", 
+            ServiceType = "Luz", 
+            TaxableItemId = 1
+        };
+        var createdTaxOrService = await taxOrServiceManager.CreateTaxOrService(taxOrService);
 
-            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
-            await unitOfWork.Users.AddAsync(user);
-            await unitOfWork.SaveChangesAsync();
+        // Act
+        var result = await taxOrServiceManager.GetTaxOrServiceById(createdTaxOrService.Value.Id);
 
-            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.TaxableItems.AddAsync(taxableItem);
-            await unitOfWork.SaveChangesAsync();
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Luz", result.Value.ServiceType);
+    }
 
-            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
-            await taxOrServiceManager.CreateTaxOrService(tax);
+    [Fact]
+    public async Task GetTaxOrServiceById_ShouldReturnFailureForNonexistentTaxOrService()
+    {
+        // Arrange
+        using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
+        var unitOfWork = new UnitOfWork(context);
+        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
 
-            // Act
-            tax.ServiceType = "Agua";
-            var result = await taxOrServiceManager.UpdateTaxOrService(tax);
+        // Act
+        var result = await taxOrServiceManager.GetTaxOrServiceById(999);
 
-            // Assert
-            Assert.True(result);
-            var updatedTax = await taxOrServiceManager.GetTaxOrServiceById(tax.Id);
-            Assert.Equal("Agua", updatedTax.ServiceType);
-        }
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Contains("No se encontro el impuesto o servicio.", result.Errors);
+    }
 
-        [Fact]
-        public async Task DeleteTaxOrService_ShouldRemoveTaxOrServiceFromDatabase()
+    [Fact]
+    public async Task CreateTaxOrService_ShouldAddTaxOrServiceToDatabase()
+    {
+        // Arrange
+        using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
+        var unitOfWork = new UnitOfWork(context);
+        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+
+        var user = new User 
         {
-            // Arrange
-            using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
-            var unitOfWork = new UnitOfWork(context);
-            var taxOrServiceManager = new TaxOrServiceManager(unitOfWork);
+            UserName = "Homero Simpson", 
+            Email = "homero@mail.com", 
+            Password = "Passw0rd!" 
+        };
+        await unitOfWork.Users.AddAsync(user);
+        await unitOfWork.SaveChangesAsync();
 
-            var user = new User { UserName = "Homero Simpson", Email = "homero@mail.com", Password = "Passw0rd" };
-            await unitOfWork.Users.AddAsync(user);
-            await unitOfWork.SaveChangesAsync();
+        var taxableItem = new TaxableItem 
+        {
+            Name = "Casa de Homero", 
+            Type = "Casa", 
+            UserId = user.Id 
+        };
+        await unitOfWork.TaxableItems.AddAsync(taxableItem);
+        await unitOfWork.SaveChangesAsync();
 
-            var taxableItem = new TaxableItem { Name = "Casa de Homero", Type = "Casa", UserId = user.Id };
-            await unitOfWork.TaxableItems.AddAsync(taxableItem);
-            await unitOfWork.SaveChangesAsync();
+        var taxOrService = new TaxOrServiceDto 
+        {
+            ServiceName = "Edesur", 
+            Owner = "Homero Simpson", 
+            ServiceType = "Luz", 
+            TaxableItemId = 1 
+        };
 
-            var tax = new TaxOrService { ServiceType = "Luz", TaxableItemId = taxableItem.Id };
-            await taxOrServiceManager.CreateTaxOrService(tax);
+        // Act
+        var result = await taxOrServiceManager.CreateTaxOrService(taxOrService);
 
-            // Act
-            var result = await taxOrServiceManager.DeleteTaxOrService(tax.Id);
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Luz", result.Value.ServiceType);
+    }
 
-            // Assert
-            Assert.True(result);
-            var taxesOrServices = await taxOrServiceManager.GetAllTaxesOrServices();
-            Assert.Empty(taxesOrServices);
-        }
+    [Fact]
+    public async Task UpdateTaxOrService_ShouldModifyTaxOrServiceInDatabase()
+    {
+        // Arrange
+        using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
+        var unitOfWork = new UnitOfWork(context);
+        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+
+        var user = new User 
+        { 
+            UserName = "Homero Simpson", 
+            Email = "homero@mail.com", 
+            Password = "Passw0rd!" 
+        };
+        await unitOfWork.Users.AddAsync(user);
+        await unitOfWork.SaveChangesAsync();
+
+        var taxableItem = new TaxableItem 
+        { 
+            Name = "Casa de Homero", 
+            Type = "Casa", 
+
+            UserId = user.Id };
+        await unitOfWork.TaxableItems.AddAsync(taxableItem);
+        await unitOfWork.SaveChangesAsync();
+
+        var taxOrService = new TaxOrServiceDto
+
+        {ServiceName = "Edesur", 
+            Owner = "Homero Simpson", 
+            ServiceType = "Luz", 
+            TaxableItemId = 1 
+        };
+        var createdTaxOrService = await taxOrServiceManager.CreateTaxOrService(taxOrService);
+
+        // Act
+        createdTaxOrService.Value.ServiceType = "Agua";
+        var updateResult = await taxOrServiceManager.UpdateTaxOrService(createdTaxOrService.Value);
+
+        // Assert
+        Assert.True(updateResult.IsSuccess);
+        var updatedTaxOrService = await taxOrServiceManager.GetTaxOrServiceById(createdTaxOrService.Value.Id);
+        Assert.True(updatedTaxOrService.IsSuccess);
+        Assert.Equal("Agua", updatedTaxOrService.Value.ServiceType);
+    }
+
+    [Fact]
+    public async Task DeleteTaxOrService_ShouldRemoveTaxOrServiceFromDatabase()
+    {
+        // Arrange
+        using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
+        var unitOfWork = new UnitOfWork(context);
+        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+
+        var user = new User 
+        { 
+            UserName = "Homero Simpson", 
+            Email = "homero@mail.com", 
+            Password = "Passw0rd!" 
+        };
+        await unitOfWork.Users.AddAsync(user);
+        await unitOfWork.SaveChangesAsync();
+
+        var taxableItem = new TaxableItem 
+        { 
+            Name = "Casa de Homero", 
+            Type = "Casa", 
+            UserId = user.Id 
+        };
+        await unitOfWork.TaxableItems.AddAsync(taxableItem);
+        await unitOfWork.SaveChangesAsync();
+
+        var taxOrService = new TaxOrServiceDto 
+        {
+            ServiceName = "Edesur", 
+            Owner = "Homero Simpson", 
+            ServiceType = "Luz", 
+            TaxableItemId = 1 
+        };
+        var createdTaxOrService = await taxOrServiceManager.CreateTaxOrService(taxOrService);
+
+        // Act
+        var result = await taxOrServiceManager.DeleteTaxOrService(createdTaxOrService.Value.Id);
+
+        // Assert
+        Assert.True(result.IsSuccess);
     }
 }

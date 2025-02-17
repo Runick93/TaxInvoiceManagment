@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Application.Validators;
 using TaxInvoiceManagment.Domain.Interfaces;
 using TaxInvoiceManagment.Domain.Models;
 
@@ -10,25 +8,26 @@ namespace TaxInvoiceManagment.Application.Managers
 {
     public class UserManager : IUserManager
     {
-        private readonly IValidator<UserDto> _userDtoValidator;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IValidator<UserDto> _userDtoValidator;
+        
 
-        public UserManager(IValidator<UserDto> userDtoValidator, IUnitOfWork unitOfWork)
+        public UserManager(IUnitOfWork unitOfWork, IValidator<UserDto> userDtoValidator)
         {
             _unitOfWork = unitOfWork;
             _userDtoValidator = userDtoValidator;
         }
 
-        //-----------------------------------------------------------------------------------------
-        public async Task<IEnumerable<UserDto>> GetAllUsers()
+        public async Task<Result<IEnumerable<UserDto>>> GetAllUsers()
         {
             var users = await _unitOfWork.Users.GetAllAsync();
-            return users?.Select(user => new UserDto
+
+            return Result<IEnumerable<UserDto>>.Success(users.Select(user => new UserDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email
-            }) ?? new List<UserDto>();
+            }));
         }
 
         public async Task<Result<UserDto>> GetUserById(int id)
@@ -37,7 +36,7 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (user == null)
             {
-                return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario con el ID '{id}'" });
+                return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario." });
             }
 
             return Result<UserDto>.Success(new UserDto
@@ -61,12 +60,12 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (await _unitOfWork.Users.ExistsByEmail(userDto.Email))
             {
-                errorsList.Add("Este email ya está registrado.");
+                errorsList.Add("Este email ya esta registrado.");
             }
 
             if (await _unitOfWork.Users.ExistsByUserName(userDto.UserName))
             {
-                errorsList.Add("Este usuario ya está registrado.");
+                errorsList.Add("Este usuario ya esta registrado.");
             }
 
             if (errorsList.Any())
@@ -88,7 +87,8 @@ namespace TaxInvoiceManagment.Application.Managers
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Email = user.Email
+                Email = user.Email,
+                Password = user.Password // Becareful, this is not a good practice.
             });
         }
 
@@ -104,7 +104,7 @@ namespace TaxInvoiceManagment.Application.Managers
             var existingUser = await _unitOfWork.Users.GetByIdAsync(userDto.Id);
             if (existingUser == null)
             {
-                return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario con el ID '{userDto.Id}'" });        
+                return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario." });        
             }
 
             existingUser.UserName = userDto.UserName ?? existingUser.UserName;
@@ -131,7 +131,8 @@ namespace TaxInvoiceManagment.Application.Managers
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
             {
-                return Result<bool>.Failure(new List<string> { $"No se encontro el usuario con el ID '{id}'" });
+                //para el log "No se encontro el usuario con el ID '{id}"
+                return Result<bool>.Failure(new List<string> { $"No se encontro el usuario." });
             }
 
             try

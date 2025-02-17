@@ -1,16 +1,11 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaxInvoiceManagment.Domain.Models;
+using TaxInvoiceManagment.Application.Dtos;
 
 namespace TaxInvoiceManagment.Application.Validators
 {
-    public class TaxOrServiceValidator : AbstractValidator<TaxOrService>
+    public class TaxOrServiceDtoValidator : AbstractValidator<TaxOrServiceDto>
     {
-        public TaxOrServiceValidator()
+        public TaxOrServiceDtoValidator()
         {
             RuleFor(t => t.TaxableItemId)
                 .GreaterThan(0).When(t => t.TaxableItemId != null)

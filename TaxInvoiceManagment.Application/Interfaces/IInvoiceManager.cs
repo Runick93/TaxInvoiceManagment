@@ -1,13 +1,13 @@
-﻿using TaxInvoiceManagment.Domain.Models;
+﻿using TaxInvoiceManagment.Application.Dtos;
 
 namespace TaxInvoiceManagment.Application.Interfaces
 {
     public interface IInvoiceManager
     {
-        Task<bool> CreateInvoice(Invoice invoice);
-        Task<bool> DeleteInvoice(int id);
-        Task<ICollection<Invoice>> GetAllInvoices();
-        Task<Invoice> GetInvoiceById(int id);
-        Task<bool> UpdateInvoice(Invoice invoice);
+        Task<Result<InvoiceDto>> CreateInvoice(InvoiceDto invoiceDto);
+        Task<Result<IEnumerable<InvoiceDto>>> GetAllInvoices();
+        Task<Result<InvoiceDto>> GetInvoiceById(int id);
+        Task<Result<InvoiceDto>> UpdateInvoice(InvoiceDto invoiceDto);
+        Task<Result<bool>> DeleteInvoice(int id);
     }
 }

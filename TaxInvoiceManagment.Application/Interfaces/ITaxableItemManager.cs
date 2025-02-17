@@ -1,13 +1,13 @@
-﻿using TaxInvoiceManagment.Domain.Models;
+﻿using TaxInvoiceManagment.Application.Dtos;
 
 namespace TaxInvoiceManagment.Application.Interfaces
 {
     public interface ITaxableItemManager
     {
-        Task<bool> CreateAsset(TaxableItem asset);
-        Task<bool> DeleteAsset(int id);
-        Task<ICollection<TaxableItem>> GetAllAssets();
-        Task<TaxableItem> GetAssetById(int id);
-        Task<bool> UpdateAsset(TaxableItem asset);
+        Task<Result<TaxableItemDto>> CreateTaxableItem(TaxableItemDto taxableItemDto);
+        Task<Result<IEnumerable<TaxableItemDto>>> GetAllTaxableItems();
+        Task<Result<TaxableItemDto>> GetTaxableItemById(int id);
+        Task<Result<TaxableItemDto>> UpdateTaxableItem(TaxableItemDto taxableItemDto);
+        Task<Result<bool>> DeleteTaxableItem(int id);
     }
 }

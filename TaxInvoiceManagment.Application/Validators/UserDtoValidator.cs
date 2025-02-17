@@ -16,12 +16,12 @@ namespace TaxInvoiceManagment.Application.Validators
                 .EmailAddress().WithMessage("Formato de email inválido.");
 
             RuleFor(u => u.Password)
-            .NotEmpty().WithMessage("La contraseña es obligatoria.")
-            .MinimumLength(8).WithMessage("La contraseña debe tener al menos 8 caracteres.")
-            .Matches(@"[A-Z]").WithMessage("La contraseña debe contener al menos una letra mayúscula.")
-            .Matches(@"[a-z]").WithMessage("La contraseña debe contener al menos una letra minúscula.")
-            .Matches(@"\d").WithMessage("La contraseña debe contener al menos un número.")
-            .Matches(@"[\W]").WithMessage("La contraseña debe contener al menos un carácter especial.");
+            .NotEmpty().WithMessage("La contraseña es obligatoria.");
+            //.MinimumLength(8).WithMessage("La contraseña debe tener al menos 8 caracteres.")
+            //.Matches(@"[A-Z]").WithMessage("La contraseña debe contener al menos una letra mayúscula.")
+            //.Matches(@"[a-z]").WithMessage("La contraseña debe contener al menos una letra minúscula.")
+            //.Matches(@"\d").WithMessage("La contraseña debe contener al menos un número.")
+            //.Matches(@"[\W]").WithMessage("La contraseña debe contener al menos un carácter especial.");
         }
     }
 }

@@ -4,10 +4,11 @@ using TaxInvoiceManagment.Persistence.Repositories;
 
 namespace TaxInvoiceManagment.Persistence.Managers
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly TaxInvoiceManagmentDbContext _context;
         private IDbContextTransaction? _currentTransaction;
+        private bool _disposed = false;
 
         public IUserRepository Users { get; }
         public ITaxableItemRepository TaxableItems { get; }
@@ -23,9 +24,6 @@ namespace TaxInvoiceManagment.Persistence.Managers
             Invoices = new InvoiceRepository(context);
         }
 
-        /// <summary>
-        /// Inicia una transacción.
-        /// </summary>
         public async Task BeginTransactionAsync()
         {
             if (_currentTransaction != null)
@@ -36,9 +34,6 @@ namespace TaxInvoiceManagment.Persistence.Managers
             _currentTransaction = await _context.Database.BeginTransactionAsync();
         }
 
-        /// <summary>
-        /// Confirma la transacción actual.
-        /// </summary>
         public async Task CommitTransactionAsync()
         {
             if (_currentTransaction == null)
@@ -62,9 +57,6 @@ namespace TaxInvoiceManagment.Persistence.Managers
             }
         }
 
-        /// <summary>
-        /// Realiza un rollback de la transacción actual.
-        /// </summary>
         public async Task RollbackTransactionAsync()
         {
             if (_currentTransaction == null)
@@ -82,15 +74,29 @@ namespace TaxInvoiceManagment.Persistence.Managers
             return await _context.SaveChangesAsync();
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+
+                    if (_currentTransaction != null)
+                    {
+                        _currentTransaction.Dispose();
+                        _currentTransaction = null;
+                    }
+                }
+
+                _disposed = true;
+            }
+        }
+
         public void Dispose()
         {
-            _context.Dispose();
-
-            if (_currentTransaction != null)
-            {
-                _currentTransaction.Dispose();
-                _currentTransaction = null;
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

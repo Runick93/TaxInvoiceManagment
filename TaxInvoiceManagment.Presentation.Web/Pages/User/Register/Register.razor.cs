@@ -1,9 +1,6 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Components;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Components;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.Presentation.Web.Pages.User
 {
@@ -34,7 +31,7 @@ namespace TaxInvoiceManagment.Presentation.Web.Pages.User
             }
             else
             {
-                await Message.Error($"Error en el registro: {string.Join("<br>", result.Errors)}", 10);
+                await Message.Error($"Error en el registro: {string.Join("\n", result.Errors)}", 10);
             }
         }
     }

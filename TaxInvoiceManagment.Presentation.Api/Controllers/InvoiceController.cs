@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
 
 namespace TaxInvoiceManagment.API.Controllers
 {
@@ -18,64 +18,40 @@ namespace TaxInvoiceManagment.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var invoices = await _invoiceManager.GetAllInvoices();
-            return Ok(invoices);
+            var result = await _invoiceManager.GetAllInvoices();
+            return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var invoice = await _invoiceManager.GetInvoiceById(id);
-                return Ok(invoice);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var result = await _invoiceManager.GetInvoiceById(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
+            return Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Invoice invoice)
+        public async Task<IActionResult> Create([FromBody] InvoiceDto invoiceDto)
         {
-            if (invoice == null)
-            {
-                return BadRequest("Invoice data is required.");
-            }
-
-            bool created = await _invoiceManager.CreateInvoice(invoice);
-            if (!created)
-            {
-                return StatusCode(500, "Invoice could not be created.");
-            }
-            return CreatedAtAction(nameof(GetById), new { id = invoice.Id }, invoice);
+            var result = await _invoiceManager.CreateInvoice(invoiceDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+            return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Invoice invoice)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] InvoiceDto invoiceDto)
         {
-            if (invoice == null || invoice.Id == 0)
-            {
-                return BadRequest("Valid Invoice data is required.");
-            }
-
-            bool updated = await _invoiceManager.UpdateInvoice(invoice);
-            if (!updated)
-            {
-                return StatusCode(500, "Invoice could not be updated.");
-            }
+            if (invoiceDto.Id != id) return BadRequest("Mismatched ID.");
+            var result = await _invoiceManager.UpdateInvoice(invoiceDto);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _invoiceManager.DeleteInvoice(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"Invoice with ID {id} was not found or could not be deleted." });
-            }
+            var result = await _invoiceManager.DeleteInvoice(id);
+            if (!result.IsSuccess) return NotFound(result.Errors);
             return NoContent();
         }
     }
