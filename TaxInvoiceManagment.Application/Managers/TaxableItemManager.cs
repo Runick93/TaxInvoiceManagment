@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
 using TaxInvoiceManagment.Domain.Interfaces;
@@ -8,13 +9,15 @@ namespace TaxInvoiceManagment.Application.Managers
 {
     public class TaxableItemManager : ITaxableItemManager
     {
+        private readonly ILogger<TaxableItemManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<TaxableItemDto> _taxableItemValidator;
 
-        public TaxableItemManager(IUnitOfWork unitOfWork, IValidator<TaxableItemDto> taxableItemValidator)
+        public TaxableItemManager(ILogger<TaxableItemManager> logger, IUnitOfWork unitOfWork, IValidator<TaxableItemDto> taxableItemValidator)
         {
             _unitOfWork = unitOfWork;
             _taxableItemValidator = taxableItemValidator;
+            _logger = logger;
         }
 
         public async Task<Result<IEnumerable<TaxableItemDto>>> GetAllTaxableItems()
@@ -38,6 +41,7 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (taxableItem == null)
             {
+                _logger.LogError($"No se encontro el objeto imponible con el id: {id}");
                 return Result<TaxableItemDto>.Failure(new List<string> { $"No se encontro el objeto imponible." });
             }
 
@@ -65,6 +69,7 @@ namespace TaxInvoiceManagment.Application.Managers
                 var user = await _unitOfWork.Users.GetByIdAsync(taxableItemDto.UserId);
                 if (user == null)
                 {
+                    _logger.LogError($"No se encontro el usuario con el id: {taxableItemDto.UserId}");
                     return Result<TaxableItemDto>.Failure(new List<string> { $"No se encontro el objeto imponible." });
                 }
             }
@@ -90,12 +95,14 @@ namespace TaxInvoiceManagment.Application.Managers
             var validationResult = await _taxableItemValidator.ValidateAsync(taxableItemDto);
             if (!validationResult.IsValid)
             {
+                _logger.LogError($"Error al validar el objeto imponible: {validationResult.Errors}");
                 return Result<TaxableItemDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
             }
 
             var existingTaxableItem = await _unitOfWork.TaxableItems.GetByIdAsync(taxableItemDto.Id);
             if (existingTaxableItem == null)
             {
+                _logger.LogError($"No se encontro el objeto imponible con el ID '{taxableItemDto.Id}'.");
                 return Result<TaxableItemDto>.Failure(new List<string> { $"No se encontro el objeto imponible." });
             }
 
@@ -116,6 +123,7 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (existingItem == null)
             {
+                _logger.LogError($"No se encontro el objeto imponible con el ID '{id}'.");
                 return Result<bool>.Failure(new List<string> { $"No se encontro el objeto imponible ." });
             }
 
@@ -127,6 +135,7 @@ namespace TaxInvoiceManagment.Application.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error al eliminar el objeto imponible: {ex.Message}");
                 return Result<bool>.Failure(new List<string> { $"Error al eliminar el objeto imponible: {ex.Message}." });
             }
         }

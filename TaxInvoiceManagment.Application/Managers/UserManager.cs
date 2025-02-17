@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
 using TaxInvoiceManagment.Domain.Interfaces;
@@ -8,14 +9,16 @@ namespace TaxInvoiceManagment.Application.Managers
 {
     public class UserManager : IUserManager
     {
+        private readonly ILogger<UserManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<UserDto> _userDtoValidator;
         
 
-        public UserManager(IUnitOfWork unitOfWork, IValidator<UserDto> userDtoValidator)
+        public UserManager(ILogger<UserManager> logger, IUnitOfWork unitOfWork, IValidator<UserDto> userDtoValidator)
         {
             _unitOfWork = unitOfWork;
             _userDtoValidator = userDtoValidator;
+            _logger = logger;
         }
 
         public async Task<Result<IEnumerable<UserDto>>> GetAllUsers()
@@ -36,6 +39,7 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (user == null)
             {
+                _logger.LogError($"No se encontro el usuario con el ID: {id}");
                 return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario." });
             }
 
@@ -60,11 +64,13 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (await _unitOfWork.Users.ExistsByEmail(userDto.Email))
             {
+                _logger.LogError($"Este email ya esta registrado: {userDto.Email}");
                 errorsList.Add("Este email ya esta registrado.");
             }
 
             if (await _unitOfWork.Users.ExistsByUserName(userDto.UserName))
             {
+                _logger.LogError($"Este usuario ya esta registrado: {userDto.UserName}");
                 errorsList.Add("Este usuario ya esta registrado.");
             }
 
@@ -97,13 +103,14 @@ namespace TaxInvoiceManagment.Application.Managers
             var validationResult = await _userDtoValidator.ValidateAsync(userDto);
             if (!validationResult.IsValid)
             {
-                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<UserDto>.Failure(errors);
+                _logger.LogError($"Error al validar el usuario: {validationResult.Errors}");
+                return Result<UserDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
             }
 
             var existingUser = await _unitOfWork.Users.GetByIdAsync(userDto.Id);
             if (existingUser == null)
             {
+                _logger.LogError($"No se encontro el usuario con el ID: {userDto.Id}");
                 return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario." });        
             }
 
@@ -131,7 +138,7 @@ namespace TaxInvoiceManagment.Application.Managers
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
             {
-                //para el log "No se encontro el usuario con el ID '{id}"
+                _logger.LogError($"No se encontro el usuario con el ID: {id}");
                 return Result<bool>.Failure(new List<string> { $"No se encontro el usuario." });
             }
 
@@ -144,6 +151,7 @@ namespace TaxInvoiceManagment.Application.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error al eliminar el usuario: {ex.Message}");
                 return Result<bool>.Failure(new List<string> { $"Error al eliminar el usuario: {ex.Message}" });
             }
         }

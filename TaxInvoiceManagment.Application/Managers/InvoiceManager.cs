@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
 using TaxInvoiceManagment.Domain.Interfaces;
@@ -8,13 +9,15 @@ namespace TaxInvoiceManagment.Application.Managers
 {
     public class InvoiceManager : IInvoiceManager
     {
+        private readonly ILogger<InvoiceManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<InvoiceDto> _invoiceValidator;
 
-        public InvoiceManager(IUnitOfWork unitOfWork, IValidator<InvoiceDto> invoiceValidator)
+        public InvoiceManager(ILogger<InvoiceManager> logger, IUnitOfWork unitOfWork, IValidator<InvoiceDto> invoiceValidator)
         {
             _unitOfWork = unitOfWork;
             _invoiceValidator = invoiceValidator;
+            _logger = logger;
         }
 
         public async Task<Result<IEnumerable<InvoiceDto>>> GetAllInvoices()
@@ -43,6 +46,7 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (invoice == null)
             {
+                _logger.LogError($"No se encontro la factura con el id: {id}");
                 return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro la factura." });
             }
 
@@ -68,12 +72,14 @@ namespace TaxInvoiceManagment.Application.Managers
             var validationResult = await _invoiceValidator.ValidateAsync(invoiceDto);
             if (!validationResult.IsValid)
             {
+                _logger.LogError($"Error al validar la factura: {validationResult.Errors}");
                 return Result<InvoiceDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
             }
 
             var taxOrService = await _unitOfWork.TaxesOrServices.GetByIdAsync(invoiceDto.TaxOrServiceId);
             if (taxOrService == null)
             {
+                _logger.LogError($"No se encontro el impuesto o servicio asociado al ID '{invoiceDto.TaxOrServiceId}'.");
                 return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio asociado." });
             }
 
@@ -104,12 +110,14 @@ namespace TaxInvoiceManagment.Application.Managers
             var validationResult = await _invoiceValidator.ValidateAsync(invoiceDto);
             if (!validationResult.IsValid)
             {
+                _logger.LogError($"Error al validar la factura: {validationResult.Errors}");
                 return Result<InvoiceDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
             }
 
             var existingInvoice = await _unitOfWork.Invoices.GetByIdAsync(invoiceDto.Id);
             if (existingInvoice == null)
             {
+                _logger.LogError($"No se encontro la factura con el id: {invoiceDto.Id}");
                 return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro la factura." });
             }
 
@@ -135,6 +143,7 @@ namespace TaxInvoiceManagment.Application.Managers
             var existingInvoice = await _unitOfWork.Invoices.GetByIdAsync(id);
             if (existingInvoice == null)
             {
+                _logger.LogError($"No se encontro la factura con el id: {id}");
                 return Result<bool>.Failure(new List<string> { $"No se encontro la factura." });
             }
 
@@ -146,6 +155,7 @@ namespace TaxInvoiceManagment.Application.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error al eliminar la factura: {ex.Message}");
                 return Result<bool>.Failure(new List<string> { $"Error al eliminar la factura: {ex.Message}."});
             }
         }

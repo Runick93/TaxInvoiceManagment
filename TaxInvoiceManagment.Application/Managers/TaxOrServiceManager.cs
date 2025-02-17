@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
 using TaxInvoiceManagment.Domain.Interfaces;
@@ -8,13 +9,15 @@ namespace TaxInvoiceManagment.Application.Managers
 {
     public class TaxOrServiceManager : ITaxOrServiceManager
     {
+        private readonly ILogger<TaxOrServiceManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<TaxOrServiceDto> _taxOrServiceValidator;
 
-        public TaxOrServiceManager(IUnitOfWork unitOfWork, IValidator<TaxOrServiceDto> taxOrServiceValidator)
+        public TaxOrServiceManager(ILogger<TaxOrServiceManager> logger, IUnitOfWork unitOfWork, IValidator<TaxOrServiceDto> taxOrServiceValidator)
         {
             _unitOfWork = unitOfWork;
             _taxOrServiceValidator = taxOrServiceValidator;
+            _logger = logger;
         }
 
         public async Task<Result<IEnumerable<TaxOrServiceDto>>> GetAllTaxesOrServices()
@@ -41,6 +44,7 @@ namespace TaxInvoiceManagment.Application.Managers
 
             if (taxOrService == null)
             {
+                _logger.LogError($"No se encontro el impuesto o servicio con el id: {id}");
                 return Result<TaxOrServiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio." });
             }
 
@@ -71,6 +75,7 @@ namespace TaxInvoiceManagment.Application.Managers
                 var taxableItem = await _unitOfWork.TaxableItems.GetByIdAsync(taxOrServiceDto.TaxableItemId);
                 if (taxableItem == null)
                 {
+                    _logger.LogError($"No se encontro el objeto imponible asociado al ID '{taxOrServiceDto.TaxableItemId}'.");
                     return Result<TaxOrServiceDto>.Failure(new List<string> { $"No se encontro el objeto imponible." });
                 }
             }
@@ -99,12 +104,14 @@ namespace TaxInvoiceManagment.Application.Managers
             var validationResult = await _taxOrServiceValidator.ValidateAsync(taxOrServiceDto);
             if (!validationResult.IsValid)
             {
+                _logger.LogError($"Error al validar el impuesto o servicio: {validationResult.Errors}");
                 return Result<TaxOrServiceDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
             }
 
             var existingTaxOrService = await _unitOfWork.TaxesOrServices.GetByIdAsync(taxOrServiceDto.Id);
             if (existingTaxOrService == null)
             {
+                _logger.LogError($"No se encontro el impuesto o servicio con el ID '{taxOrServiceDto.Id}'.");
                 return Result<TaxOrServiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio." });
             }
 
@@ -127,6 +134,7 @@ namespace TaxInvoiceManagment.Application.Managers
             var existingService = await _unitOfWork.TaxesOrServices.GetByIdAsync(id);
             if (existingService == null)
             {
+                _logger.LogError($"No se encontro el impuesto o servicio con el ID '{id}'.");
                 return Result<bool>.Failure(new List<string> { $"No se encontro el impuesto o servicio." });
             }
 
@@ -138,6 +146,7 @@ namespace TaxInvoiceManagment.Application.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error al eliminar el impuesto o servicio: {ex.Message}");
                 return Result<bool>.Failure(new List<string> { $"Error al eliminar el impuesto o servicio." });
             }
         }
