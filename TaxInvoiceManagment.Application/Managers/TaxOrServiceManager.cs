@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
@@ -11,31 +12,24 @@ namespace TaxInvoiceManagment.Application.Managers
     {
         private readonly ILogger<TaxOrServiceManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IValidator<TaxOrServiceDto> _taxOrServiceValidator;
 
-        public TaxOrServiceManager(ILogger<TaxOrServiceManager> logger, IUnitOfWork unitOfWork, IValidator<TaxOrServiceDto> taxOrServiceValidator)
+        public TaxOrServiceManager(ILogger<TaxOrServiceManager> logger, IUnitOfWork unitOfWork, IMapper mapper, IValidator<TaxOrServiceDto> taxOrServiceValidator)
         {
-            _unitOfWork = unitOfWork;
-            _taxOrServiceValidator = taxOrServiceValidator;
             _logger = logger;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _taxOrServiceValidator = taxOrServiceValidator;
         }
 
         public async Task<Result<IEnumerable<TaxOrServiceDto>>> GetAllTaxesOrServices()
         {
             var taxesOrServices = await _unitOfWork.TaxesOrServices.GetAllAsync();
 
-            return Result<IEnumerable<TaxOrServiceDto>>.Success(taxesOrServices.Select(t => new TaxOrServiceDto
-            {
-                Id = t.Id,
-                TaxableItemId = t.TaxableItemId,
-                ServiceName = t.ServiceName,
-                ServiceDescription = t.ServiceDescription,
-                Owner = t.Owner,
-                ServiceType = t.ServiceType,
-                PayFrequency = t.PayFrequency.ToString(),
-                AnnualPayment = t.AnnualPayment,
-                ClientNumber = t.ClientNumber
-            }));
+            var taxesOrServicesDto = _mapper.Map<IEnumerable<TaxOrServiceDto>>(taxesOrServices);
+            return Result<IEnumerable<TaxOrServiceDto>>.Success(taxesOrServicesDto);
+            
         }
 
         public async Task<Result<TaxOrServiceDto>> GetTaxOrServiceById(int id)
@@ -48,18 +42,8 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<TaxOrServiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio." });
             }
 
-            return Result<TaxOrServiceDto>.Success(new TaxOrServiceDto
-            {
-                Id = taxOrService.Id,
-                TaxableItemId = taxOrService.TaxableItemId,
-                ServiceName = taxOrService.ServiceName,
-                ServiceDescription = taxOrService.ServiceDescription,
-                Owner = taxOrService.Owner,
-                ServiceType = taxOrService.ServiceType,
-                PayFrequency = taxOrService.PayFrequency.ToString(),
-                AnnualPayment = taxOrService.AnnualPayment,
-                ClientNumber = taxOrService.ClientNumber
-            });
+            var taxOrServiceDto = _mapper.Map<TaxOrServiceDto>(taxOrService);
+            return Result<TaxOrServiceDto>.Success(taxOrServiceDto);
         }
 
         public async Task<Result<TaxOrServiceDto>> CreateTaxOrService(TaxOrServiceDto taxOrServiceDto)
@@ -80,23 +64,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 }
             }
 
-            var taxOrService = new TaxOrService
-            {
-                TaxableItemId = taxOrServiceDto.TaxableItemId,
-                ServiceName = taxOrServiceDto.ServiceName,
-                ServiceDescription = taxOrServiceDto.ServiceDescription,
-                Owner = taxOrServiceDto.Owner,
-                ServiceType = taxOrServiceDto.ServiceType,
-                PayFrequency = Enum.Parse<TaxOrService.PaymentFrequency>(taxOrServiceDto.PayFrequency),
-                AnnualPayment = taxOrServiceDto.AnnualPayment,
-                ClientNumber = taxOrServiceDto.ClientNumber
-            };
+            var taxOrService = _mapper.Map<TaxOrService>(taxOrServiceDto);
 
             await _unitOfWork.TaxesOrServices.AddAsync(taxOrService);
             await _unitOfWork.SaveChangesAsync();
 
-            taxOrServiceDto.Id = taxOrService.Id;
-            return Result<TaxOrServiceDto>.Success(taxOrServiceDto);
+            var createdTaxOrServiceDto = _mapper.Map<TaxOrServiceDto>(taxOrService);
+            return Result<TaxOrServiceDto>.Success(createdTaxOrServiceDto);
         }
 
         public async Task<Result<TaxOrServiceDto>> UpdateTaxOrService(TaxOrServiceDto taxOrServiceDto)
@@ -115,18 +89,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<TaxOrServiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio." });
             }
 
-            existingTaxOrService.ServiceName = taxOrServiceDto.ServiceName;
-            existingTaxOrService.ServiceDescription = taxOrServiceDto.ServiceDescription;
-            existingTaxOrService.Owner = taxOrServiceDto.Owner;
-            existingTaxOrService.ServiceType = taxOrServiceDto.ServiceType;
-            existingTaxOrService.PayFrequency = Enum.Parse<TaxOrService.PaymentFrequency>(taxOrServiceDto.PayFrequency);
-            existingTaxOrService.AnnualPayment = taxOrServiceDto.AnnualPayment;
-            existingTaxOrService.ClientNumber = taxOrServiceDto.ClientNumber;
+            _mapper.Map(taxOrServiceDto, existingTaxOrService);
 
             await _unitOfWork.TaxesOrServices.UpdateAsync(existingTaxOrService);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result<TaxOrServiceDto>.Success(taxOrServiceDto);
+            var updatedTaxableItemDto = _mapper.Map<TaxOrServiceDto>(existingTaxOrService);
+            return Result<TaxOrServiceDto>.Success(updatedTaxableItemDto);
         }
 
         public async Task<Result<bool>> DeleteTaxOrService(int id)

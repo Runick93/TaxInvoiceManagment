@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
@@ -11,28 +12,24 @@ namespace TaxInvoiceManagment.Application.Managers
     {
         private readonly ILogger<TaxableItemManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IValidator<TaxableItemDto> _taxableItemValidator;
+        private readonly IMapper _mapper;
+        private readonly IValidator<TaxableItemDto> _taxableItemDtoValidator;
 
-        public TaxableItemManager(ILogger<TaxableItemManager> logger, IUnitOfWork unitOfWork, IValidator<TaxableItemDto> taxableItemValidator)
+        public TaxableItemManager(ILogger<TaxableItemManager> logger, IUnitOfWork unitOfWork, IMapper mapper, IValidator<TaxableItemDto> taxableItemDtoValidator)
         {
-            _unitOfWork = unitOfWork;
-            _taxableItemValidator = taxableItemValidator;
+
             _logger = logger;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _taxableItemDtoValidator = taxableItemDtoValidator;
         }
 
         public async Task<Result<IEnumerable<TaxableItemDto>>> GetAllTaxableItems()
         {
             var taxableItems = await _unitOfWork.TaxableItems.GetAllAsync();
 
-            return Result<IEnumerable<TaxableItemDto>>.Success(taxableItems.Select(t => new TaxableItemDto
-            {
-                Id = t.Id,
-                UserId = t.UserId,
-                Name = t.Name,
-                Type = t.Type,
-                Address = t.Address,
-                VehicleNumberPlate = t.VehicleNumberPlate
-            }));
+            var taxableItemsDto = _mapper.Map<IEnumerable<TaxableItemDto>>(taxableItems);
+            return Result<IEnumerable<TaxableItemDto>>.Success(taxableItemsDto);      
         }
 
         public async Task<Result<TaxableItemDto>> GetTaxableItemById(int id)
@@ -45,20 +42,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<TaxableItemDto>.Failure(new List<string> { $"No se encontro el objeto imponible." });
             }
 
-            return Result<TaxableItemDto>.Success(new TaxableItemDto
-            {
-                Id = taxableItem.Id,
-                UserId = taxableItem.UserId,
-                Name = taxableItem.Name,
-                Type = taxableItem.Type,
-                Address = taxableItem.Address,
-                VehicleNumberPlate = taxableItem.VehicleNumberPlate
-            });
+            var taxableItemDto = _mapper.Map<TaxableItemDto>(taxableItem);
+            return Result<TaxableItemDto>.Success(taxableItemDto);
         }
 
         public async Task<Result<TaxableItemDto>> CreateTaxableItem(TaxableItemDto taxableItemDto)
         {
-            var validationResult = await _taxableItemValidator.ValidateAsync(taxableItemDto);
+            var validationResult = await _taxableItemDtoValidator.ValidateAsync(taxableItemDto);
             if (!validationResult.IsValid)
             {
                 return Result<TaxableItemDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
@@ -74,25 +64,18 @@ namespace TaxInvoiceManagment.Application.Managers
                 }
             }
 
-            var taxableItem = new TaxableItem
-            {
-                UserId = taxableItemDto.UserId,
-                Name = taxableItemDto.Name,
-                Type = taxableItemDto.Type,
-                Address = taxableItemDto.Address,
-                VehicleNumberPlate = taxableItemDto.VehicleNumberPlate
-            };
+            var taxableItem = _mapper.Map<TaxableItem>(taxableItemDto);
 
             await _unitOfWork.TaxableItems.AddAsync(taxableItem);
             await _unitOfWork.SaveChangesAsync();
 
-            taxableItemDto.Id = taxableItem.Id;
-            return Result<TaxableItemDto>.Success(taxableItemDto);
+            var createdTaxableItemDto = _mapper.Map<TaxableItemDto>(taxableItem);
+            return Result<TaxableItemDto>.Success(createdTaxableItemDto);
         }
 
         public async Task<Result<TaxableItemDto>> UpdateTaxableItem(TaxableItemDto taxableItemDto)
         {
-            var validationResult = await _taxableItemValidator.ValidateAsync(taxableItemDto);
+            var validationResult = await _taxableItemDtoValidator.ValidateAsync(taxableItemDto);
             if (!validationResult.IsValid)
             {
                 _logger.LogError($"Error al validar el objeto imponible: {validationResult.Errors}");
@@ -106,15 +89,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<TaxableItemDto>.Failure(new List<string> { $"No se encontro el objeto imponible." });
             }
 
-            existingTaxableItem.Name = taxableItemDto.Name;
-            existingTaxableItem.Type = taxableItemDto.Type;
-            existingTaxableItem.Address = taxableItemDto.Address;
-            existingTaxableItem.VehicleNumberPlate = taxableItemDto.VehicleNumberPlate;
+            _mapper.Map(taxableItemDto, existingTaxableItem);
 
             await _unitOfWork.TaxableItems.UpdateAsync(existingTaxableItem);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result<TaxableItemDto>.Success(taxableItemDto);
+            var updatedTaxableItemDto = _mapper.Map<TaxableItemDto>(existingTaxableItem);
+            return Result<TaxableItemDto>.Success(updatedTaxableItemDto);
         }
 
         public async Task<Result<bool>> DeleteTaxableItem(int id)

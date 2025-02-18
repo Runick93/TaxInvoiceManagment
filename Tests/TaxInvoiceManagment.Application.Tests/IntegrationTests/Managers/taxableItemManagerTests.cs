@@ -1,4 +1,8 @@
-﻿using TaxInvoiceManagment.Application.Dtos;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
+using TaxInvoiceManagment.Application.Automapper;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Managers;
 using TaxInvoiceManagment.Application.Tests;
 using TaxInvoiceManagment.Application.Validators;
@@ -13,7 +17,15 @@ public class TaxableItemManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxableItemManager = new TaxableItemManager(unitOfWork, new TaxableItemDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxableItemManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxableItemMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxableItemManager = new TaxableItemManager(mockLogger, unitOfWork, mapper, new TaxableItemDtoValidator());
+
 
         var user = new User 
         {
@@ -54,7 +66,15 @@ public class TaxableItemManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxableItemManager = new TaxableItemManager(unitOfWork, new TaxableItemDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxableItemManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxableItemMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxableItemManager = new TaxableItemManager(mockLogger, unitOfWork, mapper, new TaxableItemDtoValidator());
+
 
         var user = new User 
         {
@@ -87,7 +107,15 @@ public class TaxableItemManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxableItemManager = new TaxableItemManager(unitOfWork, new TaxableItemDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxableItemManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxableItemMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxableItemManager = new TaxableItemManager(mockLogger, unitOfWork, mapper, new TaxableItemDtoValidator());
+
 
         // Act
         var result = await taxableItemManager.GetTaxableItemById(999);
@@ -103,7 +131,15 @@ public class TaxableItemManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxableItemManager = new TaxableItemManager(unitOfWork, new TaxableItemDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxableItemManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxableItemMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxableItemManager = new TaxableItemManager(mockLogger, unitOfWork, mapper, new TaxableItemDtoValidator());
+
 
         var user = new User
         { 
@@ -126,7 +162,9 @@ public class TaxableItemManagerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal("Casa de Homero", result.Value.Name);
+        var taxableItems = await taxableItemManager.GetAllTaxableItems();
+        Assert.Single(taxableItems.Value);
+        Assert.Equal("Casa de Homero", taxableItems.Value.First().Name);
     }
 
     [Fact]
@@ -135,7 +173,15 @@ public class TaxableItemManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxableItemManager = new TaxableItemManager(unitOfWork, new TaxableItemDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxableItemManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxableItemMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxableItemManager = new TaxableItemManager(mockLogger, unitOfWork, mapper, new TaxableItemDtoValidator());
+
 
         var user = new User
         { 
@@ -160,9 +206,9 @@ public class TaxableItemManagerTests
 
         // Assert
         Assert.True(updateResult.IsSuccess);
-        var updatedTaxableItem = await taxableItemManager.GetTaxableItemById(createdTaxableItem.Value.Id);
+        var updatedTaxableItem = await taxableItemManager.GetAllTaxableItems();
         Assert.True(updatedTaxableItem.IsSuccess);
-        Assert.Equal("Casa rodante de Homero", updatedTaxableItem.Value.Name);
+        Assert.Equal("Casa rodante de Homero", updatedTaxableItem.Value.First().Name);
     }
 
     [Fact]
@@ -171,7 +217,15 @@ public class TaxableItemManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxableItemManager = new TaxableItemManager(unitOfWork, new TaxableItemDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxableItemManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxableItemMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxableItemManager = new TaxableItemManager(mockLogger, unitOfWork, mapper, new TaxableItemDtoValidator());
+
 
         var user = new User 
         {
@@ -188,10 +242,10 @@ public class TaxableItemManagerTests
             Type = "Moto", 
             UserId = 1 
         };
-        var createdTaxableItem = await taxableItemManager.CreateTaxableItem(TaxableItem);
+        await taxableItemManager.CreateTaxableItem(TaxableItem);
 
         // Act
-        var result = await taxableItemManager.DeleteTaxableItem(createdTaxableItem.Value.Id);
+        var result = await taxableItemManager.DeleteTaxableItem(1);
 
         // Assert
         Assert.True(result.IsSuccess);

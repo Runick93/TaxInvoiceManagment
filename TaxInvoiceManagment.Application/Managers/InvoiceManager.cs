@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
@@ -11,33 +12,23 @@ namespace TaxInvoiceManagment.Application.Managers
     {
         private readonly ILogger<InvoiceManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IValidator<InvoiceDto> _invoiceValidator;
 
-        public InvoiceManager(ILogger<InvoiceManager> logger, IUnitOfWork unitOfWork, IValidator<InvoiceDto> invoiceValidator)
+        public InvoiceManager(ILogger<InvoiceManager> logger, IUnitOfWork unitOfWork, IMapper mapper, IValidator<InvoiceDto> invoiceValidator)
         {
-            _unitOfWork = unitOfWork;
-            _invoiceValidator = invoiceValidator;
             _logger = logger;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _invoiceValidator = invoiceValidator;
         }
 
         public async Task<Result<IEnumerable<InvoiceDto>>> GetAllInvoices()
         {
             var invoices = await _unitOfWork.Invoices.GetAllAsync();
-            return Result<IEnumerable<InvoiceDto>>.Success(invoices.Select(i => new InvoiceDto
-            {
-                Id = i.Id,
-                TaxOrServiceId = i.TaxOrServiceId,
-                Number = i.Number,
-                Month = i.Month,
-                InvoiceAmount = i.InvoiceAmount,
-                PaymentStatus = i.PaymentStatus,
-                PaymentDate = i.PaymentDate,
-                PrimaryDueDate = i.PrimaryDueDate,
-                SecondaryDueDate = i.SecondaryDueDate,
-                InvoiceReceiptPath = i.InvoiceReceiptPath,
-                PaymentReceiptPath = i.PaymentReceiptPath,
-                Notes = i.Notes
-            }));
+
+            var invoicesDto = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+            return Result<IEnumerable<InvoiceDto>>.Success(invoicesDto);          
         }
 
         public async Task<Result<InvoiceDto>> GetInvoiceById(int id)
@@ -50,21 +41,8 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro la factura." });
             }
 
-            return Result<InvoiceDto>.Success(new InvoiceDto
-            {
-                Id = invoice.Id,
-                TaxOrServiceId = invoice.TaxOrServiceId,
-                Number = invoice.Number,
-                Month = invoice.Month,
-                InvoiceAmount = invoice.InvoiceAmount,
-                PaymentStatus = invoice.PaymentStatus,
-                PaymentDate = invoice.PaymentDate,
-                PrimaryDueDate = invoice.PrimaryDueDate,
-                SecondaryDueDate = invoice.SecondaryDueDate,
-                InvoiceReceiptPath = invoice.InvoiceReceiptPath,
-                PaymentReceiptPath = invoice.PaymentReceiptPath,
-                Notes = invoice.Notes
-            });
+            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
+            return Result<InvoiceDto>.Success(invoiceDto);
         }
 
         public async Task<Result<InvoiceDto>> CreateInvoice(InvoiceDto invoiceDto)
@@ -83,26 +61,14 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro el impuesto o servicio asociado." });
             }
 
-            var invoice = new Invoice
-            {
-                TaxOrServiceId = invoiceDto.TaxOrServiceId,
-                Number = invoiceDto.Number,
-                Month = invoiceDto.Month,
-                InvoiceAmount = invoiceDto.InvoiceAmount,
-                PaymentStatus = invoiceDto.PaymentStatus,
-                PaymentDate = invoiceDto.PaymentDate,
-                PrimaryDueDate = invoiceDto.PrimaryDueDate,
-                SecondaryDueDate = invoiceDto.SecondaryDueDate,
-                InvoiceReceiptPath = invoiceDto.InvoiceReceiptPath,
-                PaymentReceiptPath = invoiceDto.PaymentReceiptPath,
-                Notes = invoiceDto.Notes
-            };
+
+            var invoice = _mapper.Map<Invoice>(invoiceDto);
 
             await _unitOfWork.Invoices.AddAsync(invoice);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();   
 
-            invoiceDto.Id = invoice.Id;
-            return Result<InvoiceDto>.Success(invoiceDto);
+            var createdInvoiceDto = _mapper.Map<InvoiceDto>(invoice);
+            return Result<InvoiceDto>.Success(createdInvoiceDto);
         }
 
         public async Task<Result<InvoiceDto>> UpdateInvoice(InvoiceDto invoiceDto)
@@ -121,21 +87,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<InvoiceDto>.Failure(new List<string> { $"No se encontro la factura." });
             }
 
-            existingInvoice.Number = invoiceDto.Number;
-            existingInvoice.Month = invoiceDto.Month;
-            existingInvoice.InvoiceAmount = invoiceDto.InvoiceAmount;
-            existingInvoice.PaymentStatus = invoiceDto.PaymentStatus;
-            existingInvoice.PaymentDate = invoiceDto.PaymentDate;
-            existingInvoice.PrimaryDueDate = invoiceDto.PrimaryDueDate;
-            existingInvoice.SecondaryDueDate = invoiceDto.SecondaryDueDate;
-            existingInvoice.InvoiceReceiptPath = invoiceDto.InvoiceReceiptPath;
-            existingInvoice.PaymentReceiptPath = invoiceDto.PaymentReceiptPath;
-            existingInvoice.Notes = invoiceDto.Notes;
+            _mapper.Map(invoiceDto, existingInvoice);
 
             await _unitOfWork.Invoices.UpdateAsync(existingInvoice);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result<InvoiceDto>.Success(invoiceDto);
+            var updatedInvoiceDto = _mapper.Map<InvoiceDto>(existingInvoice);
+            return Result<InvoiceDto>.Success(updatedInvoiceDto);
         }
 
         public async Task<Result<bool>> DeleteInvoice(int id)

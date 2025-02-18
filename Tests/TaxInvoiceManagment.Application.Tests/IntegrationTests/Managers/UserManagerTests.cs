@@ -1,34 +1,49 @@
-﻿using TaxInvoiceManagment.Application.Dtos;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
+using TaxInvoiceManagment.Application.Automapper;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Managers;
 using TaxInvoiceManagment.Application.Tests;
 using TaxInvoiceManagment.Application.Validators;
+using TaxInvoiceManagment.Domain.Models;
 using TaxInvoiceManagment.Persistence.Managers;
 
 public class UserManagerIntegrationTests
 {
+
     [Fact]
     public async Task GetAllUsers_ShouldReturnAllUsers()
     {
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var userManager = new UserManager(unitOfWork, new UserDtoValidator());
 
-        var user1 = new UserDto 
+        var mockLogger = Mock.Of<ILogger<UserManager>>();
+
+        var config = new MapperConfiguration(cfg =>
         {
-            UserName = "Homero Simpson", 
-            Email = "homero@mail.com", 
-            Password = "Passw0rd!", 
-            ConfirmPassword = "Passw0rd!" 
+            cfg.AddProfile<UserMappingProfile>();
+        });
+        var mapper = config.CreateMapper(); 
+
+        var userManager = new UserManager(mockLogger, unitOfWork, mapper, new UserDtoValidator());
+
+        var user1 = new UserDto
+        {
+            UserName = "Homero Simpson",
+            Email = "homero@mail.com",
+            Password = "Passw0rd!",
+            ConfirmPassword = "Passw0rd!"
         };
         await userManager.CreateUser(user1);
 
-        var user2 = new UserDto 
-        { 
-            UserName = "Bart Simpson", 
-            Email = "bart@mail.com", 
-            Password = "Passw0rd!", 
-            ConfirmPassword = "Passw0rd!" 
+        var user2 = new UserDto
+        {
+            UserName = "Bart Simpson",
+            Email = "bart@mail.com",
+            Password = "Passw0rd!",
+            ConfirmPassword = "Passw0rd!"
         };
         await userManager.CreateUser(user2);
 
@@ -47,14 +62,23 @@ public class UserManagerIntegrationTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var userManager = new UserManager(unitOfWork, new UserDtoValidator());
+        var mockLogger = Mock.Of<ILogger<UserManager>>();
 
-        var user = new UserDto 
-        { 
-            UserName = "Homero Simpson", 
-            Email = "homero@mail.com", 
-            Password = "Passw0rd!", 
-            ConfirmPassword = "Passw0rd!" 
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<UserMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var userManager = new UserManager(mockLogger, unitOfWork, mapper, new UserDtoValidator());
+
+
+        var user = new UserDto
+        {
+            UserName = "Homero Simpson",
+            Email = "homero@mail.com",
+            Password = "Passw0rd!",
+            ConfirmPassword = "Passw0rd!"
         };
         var createdUser = await userManager.CreateUser(user);
 
@@ -73,7 +97,16 @@ public class UserManagerIntegrationTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var userManager = new UserManager(unitOfWork, new UserDtoValidator());
+        var mockLogger = Mock.Of<ILogger<UserManager>>();
+
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<UserMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var userManager = new UserManager(mockLogger, unitOfWork, mapper, new UserDtoValidator());
+
 
         // Act
         var result = await userManager.GetUserById(999);
@@ -89,14 +122,23 @@ public class UserManagerIntegrationTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var userManager = new UserManager(unitOfWork, new UserDtoValidator());
+        var mockLogger = Mock.Of<ILogger<UserManager>>();
 
-        var user = new UserDto 
-        { 
-            UserName = "Homero Simpson", 
-            Email = "homero@mail.com", 
-            Password = "Passw0rd!", 
-            ConfirmPassword = "Passw0rd!" 
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<UserMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var userManager = new UserManager(mockLogger, unitOfWork, mapper, new UserDtoValidator());
+
+
+        var user = new UserDto
+        {
+            UserName = "Homero Simpson",
+            Email = "homero@mail.com",
+            Password = "Passw0rd!",
+            ConfirmPassword = "Passw0rd!"
         };
 
         // Act
@@ -115,13 +157,22 @@ public class UserManagerIntegrationTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var userManager = new UserManager(unitOfWork, new UserDtoValidator());
+        var mockLogger = Mock.Of<ILogger<UserManager>>();
 
-        var user = new UserDto 
-        { 
-            UserName = "Homero Simpson", 
-            Email = "homero@mail.com", 
-            Password = "Passw0rd!", 
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<UserMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var userManager = new UserManager(mockLogger, unitOfWork, mapper, new UserDtoValidator());
+
+
+        var user = new UserDto
+        {
+            UserName = "Homero Simpson",
+            Email = "homero@mail.com",
+            Password = "Passw0rd!",
             ConfirmPassword = "Passw0rd!"
         };
         var createdUser = await userManager.CreateUser(user);
@@ -132,9 +183,9 @@ public class UserManagerIntegrationTests
 
         // Assert
         Assert.True(updateResult.IsSuccess);
-        var updatedUser = await userManager.GetUserById(createdUser.Value.Id);
+        var updatedUser = await userManager.GetAllUsers();
         Assert.True(updatedUser.IsSuccess);
-        Assert.Equal("Homero J Simpson", updatedUser.Value.UserName);
+        Assert.Equal("Homero J Simpson", updatedUser.Value.First().UserName);
     }
 
     [Fact]
@@ -143,14 +194,23 @@ public class UserManagerIntegrationTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var userManager = new UserManager(unitOfWork, new UserDtoValidator());
+        var mockLogger = Mock.Of<ILogger<UserManager>>();
 
-        var user = new UserDto 
-        { 
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<UserMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var userManager = new UserManager(mockLogger, unitOfWork, mapper, new UserDtoValidator());
+
+
+        var user = new UserDto
+        {
             UserName = "Homero Simpson",
-            Email = "homero@mail.com", 
+            Email = "homero@mail.com",
             Password = "Passw0rd!",
-            ConfirmPassword = "Passw0rd!" 
+            ConfirmPassword = "Passw0rd!"
         };
         var createdUser = await userManager.CreateUser(user);
 

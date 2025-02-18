@@ -1,6 +1,6 @@
 ﻿namespace TaxInvoiceManagment.Domain.Models
 {
-    internal class Appsettings
+    public class Appsettings
     {
     }
 }

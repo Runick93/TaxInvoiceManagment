@@ -1,4 +1,8 @@
-﻿using TaxInvoiceManagment.Application.Dtos;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
+using TaxInvoiceManagment.Application.Automapper;
+using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Managers;
 using TaxInvoiceManagment.Application.Tests;
 using TaxInvoiceManagment.Application.Validators;
@@ -13,7 +17,15 @@ public class TaxOrServiceManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxOrServiceManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxOrServiceMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxOrServiceManager = new TaxOrServiceManager(mockLogger, unitOfWork, mapper, new TaxOrServiceDtoValidator());
+
 
         var user = new User 
         { 
@@ -65,7 +77,15 @@ public class TaxOrServiceManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxOrServiceManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxOrServiceMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxOrServiceManager = new TaxOrServiceManager(mockLogger, unitOfWork, mapper, new TaxOrServiceDtoValidator());
+
 
         var user = new User 
         {
@@ -108,7 +128,15 @@ public class TaxOrServiceManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxOrServiceManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxOrServiceMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxOrServiceManager = new TaxOrServiceManager(mockLogger, unitOfWork, mapper, new TaxOrServiceDtoValidator());
+
 
         // Act
         var result = await taxOrServiceManager.GetTaxOrServiceById(999);
@@ -124,7 +152,15 @@ public class TaxOrServiceManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxOrServiceManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxOrServiceMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxOrServiceManager = new TaxOrServiceManager(mockLogger, unitOfWork, mapper, new TaxOrServiceDtoValidator());
+
 
         var user = new User 
         {
@@ -157,7 +193,9 @@ public class TaxOrServiceManagerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal("Luz", result.Value.ServiceType);
+        var taxesOrServices = await taxOrServiceManager.GetAllTaxesOrServices();
+        Assert.Single(taxesOrServices.Value);
+        Assert.Equal("Luz", taxesOrServices.Value.First().ServiceType);
     }
 
     [Fact]
@@ -166,7 +204,15 @@ public class TaxOrServiceManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxOrServiceManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxOrServiceMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxOrServiceManager = new TaxOrServiceManager(mockLogger, unitOfWork, mapper, new TaxOrServiceDtoValidator());
+
 
         var user = new User 
         { 
@@ -181,14 +227,14 @@ public class TaxOrServiceManagerTests
         { 
             Name = "Casa de Homero", 
             Type = "Casa", 
-
-            UserId = user.Id };
+            UserId = user.Id 
+        };
         await unitOfWork.TaxableItems.AddAsync(taxableItem);
         await unitOfWork.SaveChangesAsync();
 
         var taxOrService = new TaxOrServiceDto
-
-        {ServiceName = "Edesur", 
+        {
+            ServiceName = "Edesur", 
             Owner = "Homero Simpson", 
             ServiceType = "Luz", 
             TaxableItemId = 1 
@@ -201,9 +247,9 @@ public class TaxOrServiceManagerTests
 
         // Assert
         Assert.True(updateResult.IsSuccess);
-        var updatedTaxOrService = await taxOrServiceManager.GetTaxOrServiceById(createdTaxOrService.Value.Id);
+        var updatedTaxOrService = await taxOrServiceManager.GetAllTaxesOrServices();
         Assert.True(updatedTaxOrService.IsSuccess);
-        Assert.Equal("Agua", updatedTaxOrService.Value.ServiceType);
+        Assert.Equal("Agua", updatedTaxOrService.Value.First().ServiceType);
     }
 
     [Fact]
@@ -212,7 +258,15 @@ public class TaxOrServiceManagerTests
         // Arrange
         using var context = DbContextHelper.CreateSQLiteInMemoryDbContext();
         var unitOfWork = new UnitOfWork(context);
-        var taxOrServiceManager = new TaxOrServiceManager(unitOfWork, new TaxOrServiceDtoValidator());
+        var mockLogger = Mock.Of<ILogger<TaxOrServiceManager>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaxOrServiceMappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        var taxOrServiceManager = new TaxOrServiceManager(mockLogger, unitOfWork, mapper, new TaxOrServiceDtoValidator());
+
 
         var user = new User 
         { 

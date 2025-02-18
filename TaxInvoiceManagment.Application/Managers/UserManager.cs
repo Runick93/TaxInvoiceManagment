@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
@@ -11,26 +12,24 @@ namespace TaxInvoiceManagment.Application.Managers
     {
         private readonly ILogger<UserManager> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IValidator<UserDto> _userDtoValidator;
         
 
-        public UserManager(ILogger<UserManager> logger, IUnitOfWork unitOfWork, IValidator<UserDto> userDtoValidator)
+
+        public UserManager(ILogger<UserManager> logger, IUnitOfWork unitOfWork, IMapper mapper ,IValidator<UserDto> userDtoValidator)
         {
-            _unitOfWork = unitOfWork;
-            _userDtoValidator = userDtoValidator;
             _logger = logger;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _userDtoValidator = userDtoValidator;
         }
 
         public async Task<Result<IEnumerable<UserDto>>> GetAllUsers()
         {
             var users = await _unitOfWork.Users.GetAllAsync();
-
-            return Result<IEnumerable<UserDto>>.Success(users.Select(user => new UserDto
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
-            }));
+            var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
+            return Result<IEnumerable<UserDto>>.Success(usersDto);
         }
 
         public async Task<Result<UserDto>> GetUserById(int id)
@@ -43,12 +42,8 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<UserDto>.Failure(new List<string> { $"No se encontro el usuario." });
             }
 
-            return Result<UserDto>.Success(new UserDto
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
-            });
+            var userDto = _mapper.Map<UserDto>(user);
+            return Result<UserDto>.Success(userDto);
         }
 
         public async Task<Result<UserDto>> CreateUser(UserDto userDto)
@@ -79,23 +74,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 return Result<UserDto>.Failure(errorsList); 
             }
 
-            var user = new User
-            {
-                UserName = userDto.UserName,
-                Email = userDto.Email,
-                Password = userDto.Password
-            };
+            var user = _mapper.Map<User>(userDto);
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result<UserDto>.Success(new UserDto
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                Password = user.Password // Becareful, this is not a good practice.
-            });
+            var createdUserDto = _mapper.Map<UserDto>(user);
+            return Result<UserDto>.Success(createdUserDto);
         }
 
         public async Task<Result<UserDto>> UpdateUser(UserDto userDto)
@@ -122,15 +107,13 @@ namespace TaxInvoiceManagment.Application.Managers
                 existingUser.Password = userDto.Password;
             }
 
+            _mapper.Map(userDto, existingUser);
+
             await _unitOfWork.Users.UpdateAsync(existingUser);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result<UserDto>.Success(new UserDto
-            {
-                Id = existingUser.Id,
-                UserName = existingUser.UserName,
-                Email = existingUser.Email
-            });
+            var updatedUserDto = _mapper.Map<UserDto>(existingUser);
+            return Result<UserDto>.Success(updatedUserDto);
         }
 
         public async Task<Result<bool>> DeleteUser(int id)
