@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
-using TaxInvoiceManagment.Application.Dtos;
+using TaxInvoiceManagment.Application.Models;
+using TaxInvoiceManagment.Application.Models.Dtos;
 using TaxInvoiceManagment.Application.Validators;
 
 namespace TaxInvoiceManagment.Application.Tests.UnitTests

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TaxInvoiceManagment.Application.Dtos;
+using TaxInvoiceManagment.Application.Models.Dtos;
 
 namespace TaxInvoiceManagment.Application.Validators
 {

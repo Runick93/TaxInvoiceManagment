@@ -2,5 +2,5 @@
 
 namespace TaxInvoiceManagment.Domain.Interfaces
 {
-    public interface IInvoiceRepository : IRepository<Invoice> { }
+    public interface ITaxRepository : IRepository<Tax> { }
 }

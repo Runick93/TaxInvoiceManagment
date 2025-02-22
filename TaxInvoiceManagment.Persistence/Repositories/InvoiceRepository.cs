@@ -1,5 +1,5 @@
 ﻿using TaxInvoiceManagment.Domain.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
+using TaxInvoiceManagment.Domain.Entities;
 
 namespace TaxInvoiceManagment.Persistence.Repositories
 {

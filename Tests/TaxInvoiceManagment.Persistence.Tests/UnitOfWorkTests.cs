@@ -1,4 +1,4 @@
-﻿using TaxInvoiceManagment.Domain.Models;
+﻿    using TaxInvoiceManagment.Domain.Entities;
 using TaxInvoiceManagment.Persistence.Managers;
 
 namespace TaxInvoiceManagment.Persistence.Tests
@@ -197,38 +197,38 @@ namespace TaxInvoiceManagment.Persistence.Tests
             Assert.Empty(taxableItems);
         }
 
-        // TaxOrService.
+        // Tax.
         [Fact]
-        public async Task TaxOrService_GetAllAsync_ShouldReturnTaxesOrServices()
+        public async Task Tax_GetAllAsync_ShouldReturnTaxes()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType= "Agua", TaxableItemId = 1 };
+            var tax = new Tax { ServiceName = "Aysa", ServiceType= "Agua", TaxableItemId = 1 };
 
             // Act
-            await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            await unitOfWork.Taxes.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 
             // Assert
-            var taxesOrServices = await unitOfWork.TaxesOrServices.GetAllAsync();
-            Assert.Single(taxesOrServices);
-            Assert.Equal("Aysa", taxesOrServices.First().ServiceName);
+            var taxes = await unitOfWork.Taxes.GetAllAsync();
+            Assert.Single(taxes);
+            Assert.Equal("Aysa", taxes.First().ServiceName);
         }
 
         [Fact]
-        public async Task TaxOrService_GetByIdAsync_ShouldReturnTaxeOrService()
+        public async Task Tax_GetByIdAsync_ShouldReturnTax()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
-            await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            var tax = new Tax { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
+            await unitOfWork.Taxes.AddAsync(tax);
 
             // Act
-            var result = await unitOfWork.TaxesOrServices.GetByIdAsync(taxOrService.Id);
+            var result = await unitOfWork.Taxes.GetByIdAsync(tax.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -236,61 +236,61 @@ namespace TaxInvoiceManagment.Persistence.Tests
         }
 
         [Fact]
-        public async Task TaxOrService_AddAsync_ShouldReturnTaxeOrServiceAdded()
+        public async Task Tax_AddAsync_ShouldReturnTaxAdded()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
+            var tax = new Tax { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
 
             // Act
-            await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            await unitOfWork.Taxes.AddAsync(tax);
             await unitOfWork.SaveChangesAsync();
 
-            var taxesOrServices = await unitOfWork.TaxesOrServices.GetAllAsync();
+            var taxes = await unitOfWork.Taxes.GetAllAsync();
 
             // Assert
-            Assert.Single(taxesOrServices);
-            Assert.Equal("Aysa", taxesOrServices.First().ServiceName);
+            Assert.Single(taxes);
+            Assert.Equal("Aysa", taxes.First().ServiceName);
         }
 
         [Fact]
-        public async Task TaxOrService_UpdateAsync_ShouldReturnTaxeOrServiceUpdated()
+        public async Task Tax_UpdateAsync_ShouldReturnTaxUpdated()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
-            await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            var tax = new Tax { ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
+            await unitOfWork.Taxes.AddAsync(tax);
 
             // Act
-            taxOrService.ServiceName = "Edesur";
-            await unitOfWork.TaxesOrServices.UpdateAsync(taxOrService);
-            var updatedTaxOrService = await unitOfWork.TaxesOrServices.GetByIdAsync(taxOrService.Id);
+            tax.ServiceName = "Edesur";
+            await unitOfWork.Taxes.UpdateAsync(tax);
+            var updatedTax = await unitOfWork.Taxes.GetByIdAsync(tax.Id);
 
             // Assert
-            Assert.NotNull(updatedTaxOrService);
-            Assert.Equal("Edesur", updatedTaxOrService!.ServiceName);
+            Assert.NotNull(updatedTax);
+            Assert.Equal("Edesur", updatedTax!.ServiceName);
         }
 
         [Fact]
-        public async Task TaxOrService_DeleteAsync_ShouldNotReturnTaxeOrServiceDeleted()
+        public async Task Tax_DeleteAsync_ShouldNotReturnTaxDeleted()
         {
             // Arrange
             using var context = DbContextHelper.CreateInMemoryDbContext();
             var unitOfWork = new UnitOfWork(context);
 
-            var taxOrService = new TaxOrService {ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
-            await unitOfWork.TaxesOrServices.AddAsync(taxOrService);
+            var tax = new Tax {ServiceName = "Aysa", ServiceType = "Agua", TaxableItemId = 1 };
+            await unitOfWork.Taxes.AddAsync(tax);
 
             // Act
-            await unitOfWork.TaxesOrServices.DeleteAsync(taxOrService.Id);
-            var taxesOrServices = await unitOfWork.TaxesOrServices.GetAllAsync();
+            await unitOfWork.Taxes.DeleteAsync(tax.Id);
+            var taxes = await unitOfWork.Taxes.GetAllAsync();
 
             // Assert
-            Assert.Empty(taxesOrServices);
+            Assert.Empty(taxes);
         }
 
         // Invoice.
@@ -305,7 +305,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             {
                 InvoiceReceiptPath = "/invoices/Enero.pdf",
                 PaymentStatus = false,
-                TaxOrServiceId = 1,
+                TaxId = 1,
                 Month = "Enero"
             };
 
@@ -331,7 +331,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             {
                 InvoiceReceiptPath = "/invoices/Enero.pdf",
                 PaymentStatus = false,
-                TaxOrServiceId = 1,
+                TaxId = 1,
                 Month = "Enero"            
             };
             await unitOfWork.Invoices.AddAsync(invoice);
@@ -355,7 +355,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             {
                 InvoiceReceiptPath = "/invoices/Enero.pdf",
                 PaymentStatus = false,
-                TaxOrServiceId = 1,
+                TaxId = 1,
                 Month = "Enero"
             };
 
@@ -381,7 +381,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             {
                 InvoiceReceiptPath = "/invoices/Enero.pdf",
                 PaymentStatus = false,
-                TaxOrServiceId = 1,
+                TaxId = 1,
                 Month = "Enero"
             };
 
@@ -408,7 +408,7 @@ namespace TaxInvoiceManagment.Persistence.Tests
             {
                 InvoiceReceiptPath = "/invoices/Enero.pdf",
                 PaymentStatus = false,
-                TaxOrServiceId = 1,
+                TaxId = 1,
                 Month = "Enero"
             };
 

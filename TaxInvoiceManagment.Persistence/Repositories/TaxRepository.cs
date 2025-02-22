@@ -3,11 +3,11 @@ using TaxInvoiceManagment.Domain.Entities;
 
 namespace TaxInvoiceManagment.Persistence.Repositories
 {
-    public class TaxableItemRepository : Repository<TaxableItem>, ITaxableItemRepository
+    public class TaxRepository : Repository<Domain.Entities.Tax>, ITaxRepository
     {
         private readonly TaxInvoiceManagmentDbContext _context;
 
-        public TaxableItemRepository(TaxInvoiceManagmentDbContext context) : base(context)
+        public TaxRepository(TaxInvoiceManagmentDbContext context) : base(context)
         {
             _context = context;
         }
