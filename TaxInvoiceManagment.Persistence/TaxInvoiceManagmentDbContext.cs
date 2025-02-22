@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaxInvoiceManagment.Domain.Models;
+using TaxInvoiceManagment.Domain.Entities;
 
 namespace TaxInvoiceManagment.Persistence
 {
@@ -8,7 +8,7 @@ namespace TaxInvoiceManagment.Persistence
     {
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<TaxableItem> TaxableItems { get; set; } = null!;
-        public DbSet<TaxOrService> TaxesOrServices { get; set; } = null!;
+        public DbSet<Tax> TaxesOrServices { get; set; } = null!;
         public DbSet<Invoice> Invoices { get; set; } = null!;
 
         public TaxInvoiceManagmentDbContext(DbContextOptions<TaxInvoiceManagmentDbContext> options) : base(options)
@@ -42,14 +42,14 @@ namespace TaxInvoiceManagment.Persistence
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // TaxOrService
-            modelBuilder.Entity<TaxOrService>(entity =>
+            // Tax
+            modelBuilder.Entity<Tax>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.TaxableItemId).IsRequired();
 
                 entity.HasOne(e => e.TaxableItem)
-                      .WithMany(a => a.TaxesOrServices)
+                      .WithMany(a => a.Taxes)
                       .HasForeignKey(e => e.TaxableItemId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
@@ -66,9 +66,9 @@ namespace TaxInvoiceManagment.Persistence
                 entity.Property(e => e.PaymentReceiptPath).HasMaxLength(255);
                 entity.Property(e => e.Notes).HasMaxLength(500);
 
-                entity.HasOne(e => e.TaxOrService)
+                entity.HasOne(e => e.Tax)
                       .WithMany(t => t.Invoices)
-                      .HasForeignKey(e => e.TaxOrServiceId)
+                      .HasForeignKey(e => e.TaxId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
         }

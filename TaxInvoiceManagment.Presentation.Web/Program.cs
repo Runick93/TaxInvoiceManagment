@@ -27,22 +27,22 @@ builder.Services.AddLocalization();
 
 builder.Services.AddScoped<IChartService, ChartService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<TaxInvoiceManagment.Presentation.Web.Services.IUserService, TaxInvoiceManagment.Presentation.Web.Services.UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddDbContext<TaxInvoiceManagmentDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUserManager, UserManager>();
-builder.Services.AddScoped<ITaxableItemManager, TaxableItemManager>();
-builder.Services.AddScoped<ITaxOrServiceManager, TaxOrServiceManager>();
-builder.Services.AddScoped<IInvoiceManager, InvoiceManager>();
+builder.Services.AddScoped<TaxInvoiceManagment.Application.Interfaces.IUserService, TaxInvoiceManagment.Application.Managers.UserService>();
+builder.Services.AddScoped<ITaxableItemService, TaxableItemService>();
+builder.Services.AddScoped<ITaxService, TaxService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<TaxableItemDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TaxOrServiceDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TaxDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<InvoiceDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>();
 

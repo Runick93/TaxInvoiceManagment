@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
+using TaxInvoiceManagment.Application.Models.Dtos;
 
 namespace TaxInvoiceManagment.Presentation.Web.Pages.User
 {
@@ -8,7 +8,7 @@ namespace TaxInvoiceManagment.Presentation.Web.Pages.User
     public partial class Register
     {
         [Inject] public AntDesign.MessageService Message { get; set; } = default!;
-        [Inject] public IUserManager _userManager { get; set; } = default!;
+        [Inject] public IUserService _userManager { get; set; } = default!;
 
         private UserDto _userDto = new();
         private string _confirmPassword = "";

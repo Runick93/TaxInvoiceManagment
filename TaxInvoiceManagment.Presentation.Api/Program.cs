@@ -2,12 +2,12 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using TaxInvoiceManagment.Application.Automapper;
+using TaxInvoiceManagment.Application.Mappers;
 using TaxInvoiceManagment.Application.Interfaces;
 using TaxInvoiceManagment.Application.Managers;
 using TaxInvoiceManagment.Application.Validators;
 using TaxInvoiceManagment.Domain.Interfaces;
-using TaxInvoiceManagment.Domain.Models;
+using TaxInvoiceManagment.Domain.Entities;
 using TaxInvoiceManagment.Persistence;
 using TaxInvoiceManagment.Persistence.Managers;
 
@@ -42,20 +42,20 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Automapper
 builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddAutoMapper(typeof(TaxableItemMappingProfile));
-builder.Services.AddAutoMapper(typeof(TaxOrServiceMappingProfile));
+builder.Services.AddAutoMapper(typeof(TaxMappingProfile));
 builder.Services.AddAutoMapper(typeof(InvoiceMappingProfile));
 
 // Managers
-builder.Services.AddScoped<IUserManager, UserManager>();
-builder.Services.AddScoped<ITaxableItemManager, TaxableItemManager>();
-builder.Services.AddScoped<ITaxOrServiceManager, TaxOrServiceManager>();
-builder.Services.AddScoped<IInvoiceManager, InvoiceManager>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaxableItemService, TaxableItemService>();
+builder.Services.AddScoped<ITaxService, TaxService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 // Validations
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<TaxableItemDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TaxOrServiceDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TaxDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<InvoiceDtoValidator>();
 
 builder.Services.AddControllers();

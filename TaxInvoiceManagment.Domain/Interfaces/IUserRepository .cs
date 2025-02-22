@@ -1,4 +1,4 @@
-﻿using TaxInvoiceManagment.Domain.Models;
+﻿using TaxInvoiceManagment.Domain.Entities;
 
 namespace TaxInvoiceManagment.Domain.Interfaces
 {

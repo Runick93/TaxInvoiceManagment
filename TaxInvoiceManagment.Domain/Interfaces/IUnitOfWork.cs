@@ -4,7 +4,7 @@
     {
         IUserRepository Users { get; }
         ITaxableItemRepository TaxableItems { get; }
-        ITaxOrServiceRepository TaxesOrServices { get; }
+        ITaxRepository Taxes { get; }
         IInvoiceRepository Invoices { get; }
         Task<int> SaveChangesAsync();
     }

@@ -6,43 +6,43 @@ namespace TaxInvoiceManagment.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class TaxController : ControllerBase
     {
-        private readonly IUserService _userManager;
+        private readonly ITaxService _taxService;
 
-        public UserController(IUserService userManager)
+        public TaxController(ITaxService taxService)
         {
-            _userManager = userManager;
+            _taxService = taxService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _userManager.GetAllUsers();
+            var result = await _taxService.GetAllTaxes();
             return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _userManager.GetUserById(id);
+            var result = await _taxService.GetTaxById(id);
             if (!result.IsSuccess) return NotFound(result.Errors);
             return Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserDto userDto)
+        public async Task<IActionResult> Create([FromBody] TaxDto taxDto)
         {
-            var result = await _userManager.CreateUser(userDto);
+            var result = await _taxService.CreateTax(taxDto);
             if (!result.IsSuccess) return BadRequest(result.Errors);
             return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UserDto userDto)
+        public async Task<IActionResult> Update(int id, [FromBody] TaxDto taxDto)
         {
-            if (userDto.Id != id) return BadRequest("Mismatched ID.");
-            var result = await _userManager.UpdateUser(userDto);
+            if (taxDto.Id != id) return BadRequest("Mismatched ID.");
+            var result = await _taxService.UpdateTax(taxDto);
             if (!result.IsSuccess) return BadRequest(result.Errors);
             return NoContent();
         }
@@ -50,7 +50,7 @@ namespace TaxInvoiceManagment.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _userManager.DeleteUser(id);
+            var result = await _taxService.DeleteTax(id);
             if (!result.IsSuccess) return NotFound(result.Errors);
             return NoContent();
         }

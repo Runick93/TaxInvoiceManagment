@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaxInvoiceManagment.Application.Dtos;
 using TaxInvoiceManagment.Application.Interfaces;
+using TaxInvoiceManagment.Application.Models.Dtos;
 
 namespace TaxInvoiceManagment.API.Controllers
 {
@@ -8,9 +8,9 @@ namespace TaxInvoiceManagment.API.Controllers
     [Route("api/[controller]")]
     public class InvoiceController : ControllerBase
     {
-        private readonly IInvoiceManager _invoiceManager;
+        private readonly IInvoiceService _invoiceManager;
 
-        public InvoiceController(IInvoiceManager invoiceManager)
+        public InvoiceController(IInvoiceService invoiceManager)
         {
             _invoiceManager = invoiceManager;
         }

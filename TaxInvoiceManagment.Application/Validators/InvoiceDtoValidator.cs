@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TaxInvoiceManagment.Application.Dtos;
+using TaxInvoiceManagment.Application.Models.Dtos;
 
 namespace TaxInvoiceManagment.Application.Validators
 {
@@ -7,7 +7,7 @@ namespace TaxInvoiceManagment.Application.Validators
     {
         public InvoiceDtoValidator()
         {
-            RuleFor(i => i.TaxOrServiceId)
+            RuleFor(i => i.TaxId)
                 .GreaterThan(0).WithMessage("Debe estar asociado a un servicio válido.");
 
             RuleFor(i => i.Number)

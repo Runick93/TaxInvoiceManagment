@@ -12,7 +12,7 @@ namespace TaxInvoiceManagment.Persistence.Managers
 
         public IUserRepository Users { get; }
         public ITaxableItemRepository TaxableItems { get; }
-        public ITaxOrServiceRepository TaxesOrServices { get; }
+        public ITaxRepository Taxes { get; }
         public IInvoiceRepository Invoices { get; }
 
         public UnitOfWork(TaxInvoiceManagmentDbContext context)
@@ -20,7 +20,7 @@ namespace TaxInvoiceManagment.Persistence.Managers
             _context = context;
             Users = new UserRepository(context);
             TaxableItems = new TaxableItemRepository(context);
-            TaxesOrServices = new TaxOrServiceRepository(context);
+            Taxes = new TaxRepository(context);
             Invoices = new InvoiceRepository(context);
         }
 
