@@ -1,9 +1,10 @@
 ﻿using TaxInvoiceManagment.Domain.Interfaces;
 using TaxInvoiceManagment.Domain.Entities;
+using TaxInvoiceManagment.Persistence.DbContexts;
 
 namespace TaxInvoiceManagment.Persistence.Repositories
 {
-    public class TaxableItemRepository : Repository<TaxableItem>, ITaxableItemRepository
+    public class TaxableItemRepository : BaseRepository<TaxableItem>, ITaxableItemRepository
     {
         private readonly TaxInvoiceManagmentDbContext _context;
 

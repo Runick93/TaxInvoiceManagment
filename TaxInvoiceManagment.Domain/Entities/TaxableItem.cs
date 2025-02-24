@@ -9,6 +9,6 @@
         public string Type { get; set; } = null!;
         public string? Address { get; set; }
         public string? VehicleNumberPlate { get; set; }
-        public ICollection<Tax> Taxes { get; set; } = new List<Tax>();
+        public ICollection<Tax> Taxes { get; } = new List<Tax>();
     }
 }

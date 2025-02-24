@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TaxInvoiceManagment.Persistence;
+using TaxInvoiceManagment.Persistence.DbContexts;
 
 #nullable disable
 

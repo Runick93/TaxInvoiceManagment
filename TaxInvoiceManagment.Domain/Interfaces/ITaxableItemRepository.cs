@@ -2,5 +2,5 @@
 
 namespace TaxInvoiceManagment.Domain.Interfaces
 {
-    public interface ITaxableItemRepository : IRepository<TaxableItem> { }
+    public interface ITaxableItemRepository : IBaseRepository<TaxableItem> { }
 }

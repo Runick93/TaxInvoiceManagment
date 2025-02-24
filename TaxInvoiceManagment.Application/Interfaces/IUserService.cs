@@ -1,4 +1,5 @@
-﻿using TaxInvoiceManagment.Application.Models.Dtos;
+﻿using TaxInvoiceManagment.Application.Common;
+using TaxInvoiceManagment.Application.Models.Dtos;
 
 namespace TaxInvoiceManagment.Application.Interfaces
 {

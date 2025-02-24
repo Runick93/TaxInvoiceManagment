@@ -13,7 +13,7 @@
         public int Id { get; set; } //PK
         public int TaxableItemId { get; set; } //FK
         public TaxableItem TaxableItem { get; set; } = null!; //??
-        public string? ServiceName { get; set; }
+        public string? Name { get; set; }
         public string ? ServiceDescription { get; set; }
         public string? Owner { get; set; }
         public string? ServiceType { get; set; }
@@ -21,6 +21,6 @@
         public bool AnnualPayment { get; set; }
         public string? ClientNumber { get; set; }
         public bool? AutoDebit { get; set; }
-        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+        public ICollection<Invoice> Invoices { get; } = new List<Invoice>();
     }
 }

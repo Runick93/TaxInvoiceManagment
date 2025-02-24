@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaxInvoiceManagment.Domain.Interfaces;
 using TaxInvoiceManagment.Domain.Entities;
+using TaxInvoiceManagment.Persistence.DbContexts;
 
 namespace TaxInvoiceManagment.Persistence.Repositories
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
         private readonly TaxInvoiceManagmentDbContext _context;
 

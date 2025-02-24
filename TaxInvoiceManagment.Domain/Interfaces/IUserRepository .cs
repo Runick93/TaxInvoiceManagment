@@ -2,7 +2,7 @@
 
 namespace TaxInvoiceManagment.Domain.Interfaces
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IBaseRepository<User>
     {
         Task<bool> ExistsByEmail(string email);
         Task<bool> ExistsByUserName(string userName);

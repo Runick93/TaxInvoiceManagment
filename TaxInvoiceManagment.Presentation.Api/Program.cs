@@ -1,91 +1,96 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Serilog;
-using TaxInvoiceManagment.Application.Mappers;
-using TaxInvoiceManagment.Application.Interfaces;
-using TaxInvoiceManagment.Application.Managers;
-using TaxInvoiceManagment.Application.Validators;
-using TaxInvoiceManagment.Domain.Interfaces;
-using TaxInvoiceManagment.Domain.Entities;
-using TaxInvoiceManagment.Persistence;
-using TaxInvoiceManagment.Persistence.Managers;
+using TaxInvoiceManagment.Application.DependencyInjection;
+using TaxInvoiceManagment.Infrastructure.DependencyInjection;
+using TaxInvoiceManagment.Persistence.DbContexts;
+using TaxInvoiceManagment.Persistence.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-IConfiguration configuration = new ConfigurationBuilder()
-                                            .SetBasePath(Directory.GetCurrentDirectory())
-                                            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                                            .Build();
-Appsettings appSettings = new();
-configuration.Bind("Appsettings", appSettings);
+// ==============================
+// 🔹 Configuration
+// ==============================
+IConfiguration configuration = builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
 
+// Ensure directories exist
+void EnsureDirectoryExists(string? filePath)
+{
+    if (!string.IsNullOrWhiteSpace(filePath))
+    {
+        string? directory = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+    }
+}
+
+string dbPath = configuration.GetConnectionString("DefaultConnection") ?? "";
+string logPath = configuration.GetValue<string>("Serilog:Path") ?? "";
+EnsureDirectoryExists(dbPath);
+EnsureDirectoryExists(logPath);
+
+// ==============================
+// 🔹 Logger Configuration (Serilog)
+// ==============================
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .WriteTo.File(
-    path: configuration.GetValue<string>("Serilog:Path"),
-    restrictedToMinimumLevel: Enum.Parse<Serilog.Events.LogEventLevel>(configuration.GetValue<string>("Serilog:Level")),
-    rollingInterval: RollingInterval.Day,
-    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}"
+        path: logPath,
+        restrictedToMinimumLevel: Enum.Parse<Serilog.Events.LogEventLevel>(
+            configuration.GetValue<string>("Serilog:Level") ?? "Information"
+        ),
+        rollingInterval: RollingInterval.Day,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}"
     )
     .CreateLogger();
+
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
-// Add services to the container.
+// ==============================
+// 🔹 Services Registration
+// ==============================
 builder.Services.AddDbContext<TaxInvoiceManagmentDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(dbPath));
 
-// Repositories
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Automapper
-builder.Services.AddAutoMapper(typeof(UserMappingProfile));
-builder.Services.AddAutoMapper(typeof(TaxableItemMappingProfile));
-builder.Services.AddAutoMapper(typeof(TaxMappingProfile));
-builder.Services.AddAutoMapper(typeof(InvoiceMappingProfile));
-
-// Managers
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITaxableItemService, TaxableItemService>();
-builder.Services.AddScoped<ITaxService, TaxService>();
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-
-// Validations
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TaxableItemDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TaxDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<InvoiceDtoValidator>();
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
+builder.Services.AddPersistence();
 
 builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// ==============================
+// 🔹 Database Migration
+// ==============================
 using (var scope = app.Services.CreateScope())
 {
     try
     {
         var context = scope.ServiceProvider.GetRequiredService<TaxInvoiceManagmentDbContext>();
-        context.Database.Migrate(); // O EnsureCreated()
+        context.Database.Migrate();
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error applying migrations: {ex.Message}");
+        Log.Error($"Error applying migrations: {ex.Message}");
     }
 }
 
+// ==============================
+// 🔹 Middleware Configuration
+// ==============================
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
+app.UseSerilogRequestLogging();
 app.MapControllers();
 
 app.Run();

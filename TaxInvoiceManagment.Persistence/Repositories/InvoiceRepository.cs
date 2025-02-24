@@ -1,9 +1,10 @@
 ﻿using TaxInvoiceManagment.Domain.Interfaces;
 using TaxInvoiceManagment.Domain.Entities;
+using TaxInvoiceManagment.Persistence.DbContexts;
 
 namespace TaxInvoiceManagment.Persistence.Repositories
 {
-    public class InvoiceRepository : Repository<Invoice>, IInvoiceRepository
+    public class InvoiceRepository : BaseRepository<Invoice>, IInvoiceRepository
     {
         private readonly TaxInvoiceManagmentDbContext _context;
 

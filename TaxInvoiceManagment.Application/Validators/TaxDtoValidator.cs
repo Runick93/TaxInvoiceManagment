@@ -11,7 +11,7 @@ namespace TaxInvoiceManagment.Application.Validators
                 .GreaterThan(0).When(t => t.TaxableItemId != null)
                 .WithMessage("Debe ser un ID de ítem imponible válido.");
 
-            RuleFor(t => t.ServiceName)
+            RuleFor(t => t.Name)
                 .NotEmpty().WithMessage("El nombre del servicio es obligatorio.")
                 .MaximumLength(100).WithMessage("El nombre del servicio no puede superar los 100 caracteres.");
 

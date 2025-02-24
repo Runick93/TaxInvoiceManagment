@@ -30,4 +30,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IntegrationTests\Apis\" />
+    <Folder Include="UnitTests\Mappers\" />
+  </ItemGroup>
+
 </Project>
